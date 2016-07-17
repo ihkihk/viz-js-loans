@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 
-<!------------------------------------------------------------------------------
- -- File:        index.html
- -- Project:     DATAN P6
- -- Purpose:     Main page of the data viz app
- -- Author:      Ivailo Kassamakov (c) 2016
- -- Created:     15-Jul-2016  
- -- Last change: 
- -- Standard:    HTML5/CSS3
- -- Notes:       
- ------------------------------------------------------------------------------>
+<!--****************************************************************************-
+ * File:        index.html
+ * Project:     DATAN P6
+ * Purpose:     Main page of the data viz app
+ * Author:      Ivailo Kassamakov (c) 2016
+ * Created:     15-Jul-2016
+ * Last change:
+ * Standard:    HTML5/CSS3
+ * Notes:
+ ****************************************************************************-->
 
 <html>
 
 <head>
 	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 
 	<title>DataViz of Prosper loans (DATAN P6)</title>
 
@@ -27,24 +27,26 @@
 	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
 	<script src="//d3js.org/topojson.v1.min.js"></script>
 	<script src='https://code.jquery.com/jquery-3.1.0.min.js'
-			integrity='sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=' 
+			integrity='sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s='
 			crossorigin='anonymous'></script>
 
 	<!--Own JS-->
+	<script type='text/javascript' src='js/dataModel.js'></script>
 	<script type='text/javascript' src='js/drawPrimitives.js'></script>
 	<script type='text/javascript' src='js/View.js'></script>
+	<script type='text/javascript' src='js/chart_barStates.js'></script>
 	<script type='text/javascript' src='js/page0.js'></script>
 	<script type='text/javascript' src='js/page1.js'></script>
 	<script type='text/javascript' src='js/page2.js'></script>
 	<script type='text/javascript' src='js/story.js'></script>
-	
+
 	<!--Own CSS-->
 	<link href='css/viz.css' rel='stylesheet' type='text/css'>
-	<link href='css/filter.svg' rel='external' type='image/svg+xml'>
 
 	<style>
 		#div-chart {
 			/* Center vert/horiz in the middle of the page */
+			padding: 10;
 			display: inline-block;
 			top: 50%;
 			left: 50%;
@@ -71,23 +73,27 @@
 			font-family: Vollkorn, Verdana, sans-serif;
 			font-style: italic;
 		}
-		
+
 	</style>
 
 </head>
 
 <body>
 	<!--<h1>How people in the US take credits (based on statistics of Prosper Loans)</h1>-->
-<svg height="0" width="0" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <filter id="f3" x="-10%" y="-10%" width="120%" height="120%">
-      <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
-      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="4" />
-      <feBlend in="SourceGraphic" in2="blurOut" mode="screen" />
-    </filter>
-  </defs>
-</svg>
 
+	<!-- Filter used by the viz story board.
+	     TODO: Find a way to extract this to a separate file.-->
+	<svg height="0" width="0" xmlns="http://www.w3.org/2000/svg">
+	  <defs>
+	    <filter id="f3" x="-10%" y="-10%" width="120%" height="120%">
+	      <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
+	      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="4" />
+	      <feBlend in="SourceGraphic" in2="blurOut" mode="screen" />
+	    </filter>
+	  </defs>
+	</svg>
+
+	<!-- This is the placeholder for the dataviz -->
 	<div id='div-chart'>
 	</div>
 
@@ -97,55 +103,81 @@
 	var mainCtrl = {
 		storyCtrl: storyCtrl,
 
-		viz: {
-			story_margin: 10,
-			story_width: 1200,
-			story_height: 800,
-			init: function() {
-				this.width  = this.story_width + 2 * this.story_margin;
-				this.height = this.story_height + 2 * this.story_margin;
-				return this;
-			},
+		viewport: {
+			padding: 10,
 			d3c: null
-		}.init(),
-
-		init: function(parent_div) {
-			this.createSVG(parent_div);
-			this.storyCtrl.createView(this.viz.d3c, this);
 		},
 
-		createSVG: function(parent_div) {
-			this.viz.d3c  = d3.select(parent_div).
-				append('svg').
-				attr('class', 'viz-canvas').
-				attr('width', this.viz.width).
-				attr('height', this.viz.height).
+		storyViewCanvas: {
+			d3c: null,
+			// Note: story_width and story_height are in golder ratio
+			size: {w: 1300, h: 800}
+		},
+
+		init: function(parent_div) {
+			this.createViewport(parent_div);
+
+			this.storyViewCanvas.d3c = this.viewport.d3c.
 				append('g').
-				// Move the coordinate origin to the natural bottom left corner
-				attr('transform', 'translate(' + this.viz.story_margin + 
-					', ' + this.viz.story_margin + ')');
+				// Move the coordinate origin to consider the margins around the story view
+				attr('transform', 'translate(' + this.viewport.padding +
+					', ' + this.viewport.padding + ')');
+
+			// TODO: Remove this debug code
+			dbgRect(this.storyViewCanvas.d3c, 0, 0,
+				this.storyViewCanvas.size.w, this.storyViewCanvas.size.h);
+
+			this.storyCtrl.createView(this.storyViewCanvas, this);
+		},
+
+		createViewport: function(parent_div) {
+			this.viewport.d3c  = d3.select(parent_div).
+				append('svg').
+				attr('class', 'viz-viewport').
+				attr('width', this.storyViewCanvas.size.w + 2 * this.viewport.padding).
+				attr('height', this.storyViewCanvas.size.h + 2 * this.viewport.padding);
+
+			this.viewport.d3c.append('rect').
+				attr('class', 'bkgrnd-viz').
+				attr('x', this.viewport.padding).
+				attr('y', this.viewport.padding).
+				attr('width', this.storyViewCanvas.size.w).
+				attr('height', this.storyViewCanvas.size.h).
+				attr('rx', '10px').
+				attr('ry', '10px');
 		}, // end function createCanvas(...)
-		
-		dataReady(error, data) {
+
+		dataReady: function(error, data) {
 			if (error) throw error;
-			
-			alert("Data was loaded OK!")
+
+			model.loadStatesTable(data);
+			//alert("Data was loaded OK!");
 		}
 	};
 
 	d3.queue()
-		.defer(d3.csv, "data/prosper_loans.csv")
-		.defer(d3.csv, "data/Income data for US states.csv", function(d) { return d; })
+		//.defer(d3.csv, "data/prosper_loans.csv")
+		.defer(d3.csv, "data/Income data for US states.csv", function(d) {
+			for (i in d) {
+				if (i != 'Rank' && i != 'Per capita income' && i != 'State')
+					delete d[i];
+			}
+			d['Rank'] = +d['Rank'];
+			// Remove the leading '$' and the thousands comma
+			d['Per capita income'] = +d['Per capita income'].replace(/[$,]/g, "");
+			return d;
+		})
 		.await(mainCtrl.dataReady);
-	//d3.csv('', mainCtrl.dataReady);
-	
+
 	mainCtrl.init('#div-chart');
 	</script>
 
 	<footer>
-	&copy; Ivailo Kassamakov 2016, GPL v.3
-	</footer>
+	&copy; 2016 Ivailo Kassamakov, Available for use under <a href="https://www.tldrlegal.com/l/mit" target='_blank'>The MIT License</a>
 
+	<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+	<div>Icons made by <a href="http://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+	</footer>
 </body>
 
 </html>

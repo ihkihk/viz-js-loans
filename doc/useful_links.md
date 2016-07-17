@@ -2,9 +2,12 @@
 * <https://benfrain.com/applying-multiple-svg-filter-effects-defined-in-css-or-html/>
 * <https://css-tricks.com/svg-use-external-source/>
 
+# HTML
+
 # JS
 * <http://javascriptissexy.com/javascript-apply-call-and-bind-methods-are-essential-for-javascript-professionals/>
 * <http://perfectionkills.com/understanding-delete/>
+* <http://stackoverflow.com/questions/560829/calling-base-method-using-javascript-prototype>
 
 # D3
 * [MBostock Choropleth example](http://bl.ocks.org/mbostock/4060606)
@@ -12,6 +15,8 @@
 # Tools
 * <https://github.com/substack/node-browserify>
 * <https://github.com/jsdoc3/jsdoc>
+* <https://validator.w3.org/#validate_by_input>
+* <http://jshint.com/>
 
 # General
 * <https://medium.com/@mbostock/what-makes-software-good-943557f8a488>

@@ -1,15 +1,17 @@
-IMPORTANT: The Software (together with its documentation) and the Visualized data 
+IMPORTANT: The Software (together with its documentation) and the Visualized data
 are licensed under two separate lincese, jointly reproduced below.
 
 1. License governing this Software and the associated documentation files:
         The MIT License (MIT)
-        
+
 2. License governing the aggregated, transformed and visualized data:
         Creative Commons Attribution 4.0
-        
+
 (Note: Scroll down to view the CC-BY-4.0 license text)
 
-Valid for both licenses: Copyright (c) 2016 Ivailo Kassamakov
+
+Valid for both licenses:
+- Copyright (c) 2016 Ivailo Kassamakov
 
 =================================================================================
 The MIT License (MIT)
@@ -350,4 +352,3 @@ Section 8 -- Interpretation.
      as a limitation upon, or waiver of, any privileges and immunities
      that apply to the Licensor or You, including from the legal
      processes of any jurisdiction or authority.
-     
