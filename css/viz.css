@@ -120,7 +120,7 @@
 }
 
 .icon-inactive:hover {
-        transform: translate(1px,1px);
+    transform: translate(1px,1px);
     /*opacity: 1;*/
 }
 
@@ -149,13 +149,18 @@
 }
 
 .map .states {
-    fill: none;
+	;
+}
+
+.map .state {
     stroke: black;
-    stroke-linejoin: round;
-    /*-webkit-clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);*/
-    /*-webkit-clip-path: polygon(0px 0px, 100px 0px, 100px 100px, 0px 100px);*/
-    -webkit-clip-path: polygon(0 0, 614 0, 614 284, 0 284);
-    /*clip-path: view-box;*/
+    stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.map .state.active{
+    fill: orange;
+
 }
 
 .q0-9 { fill:rgb(247,251,255); }
@@ -170,5 +175,6 @@
 
 .map .map-border {
     stroke: black;
+	shape-rendering: crispEdges;
 }
 /* EOF */

@@ -12,6 +12,8 @@
 # D3
 * [MBostock Choropleth example](http://bl.ocks.org/mbostock/4060606)
 * [MBostock Sortable Bar Chart example](http://bl.ocks.org/mbostock/3885705)
+* [MBostock Zoom to Bounding Box II example](https://bl.ocks.org/mbostock/9656675)
+* [Centering a map](https://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object)
 
 # Tools
 * <https://github.com/substack/node-browserify>
