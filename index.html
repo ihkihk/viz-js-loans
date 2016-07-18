@@ -35,6 +35,7 @@
 	<script type='text/javascript' src='js/drawPrimitives.js'></script>
 	<script type='text/javascript' src='js/View.js'></script>
 	<script type='text/javascript' src='js/chart_barStates.js'></script>
+	<script type='text/javascript' src='js/chart_mapUS.js'></script>
 	<script type='text/javascript' src='js/page0.js'></script>
 	<script type='text/javascript' src='js/page1.js'></script>
 	<script type='text/javascript' src='js/page2.js'></script>
@@ -57,6 +58,7 @@
 		body {
 			font-family: 'Old Standard TT', Verdana, sans-serif;
 		}
+
 		h1 {
 			font-size: 40px;
 			text-align: center;
@@ -64,6 +66,7 @@
 		}
 
 		footer {
+			z-index: -1000;
 			display: block;
 			position: absolute;
 			bottom: 2%;
@@ -157,17 +160,9 @@
 
 	d3.queue()
 		//.defer(d3.csv, "data/prosper_loans.csv")
-		.defer(d3.csv, "data/Income data for US states.csv", function(d) {
-			for (i in d) {
-				if (i != 'Rank' && i != 'Per capita income' && i != 'State')
-					delete d[i];
-			}
-			d['Rank'] = +d['Rank'];
-			// Remove the leading '$' and the thousands comma
-			d['Per capita income'] = +d['Per capita income'].replace(/[$,]/g, "");
-			return d;
-		})
-		.await(mainCtrl.dataReady);
+		.defer(d3.json, "data/USA.json")
+		.defer(d3.csv, "data/Income data for US states.csv", model.processIncomeData.bind(model))
+		.awaitAll(mainCtrl.dataReady);
 
 	mainCtrl.init('#div-chart');
 	</script>

@@ -12,7 +12,8 @@ chartStatesView.gui = {
 		yAxis: {d3c: null, BBox: {x:null, y:null, w:null, h:null}, scale:null},
 		body: {d3c:null, BBox: {x:null, y:null, w:null, h:null}}
 	}
-}
+};
+
 chartStatesView.create = function(canvas, ctrl, flShow=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'chartBarStates');
@@ -119,6 +120,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 		// Show details by default
 		this.ctrl.iconDetailsClicked();
 	};
+
     // Wait for data to be loaded
     function waitfor(that, obj, checkfunc, callback) {
         while (checkfunc.call(obj) == false) {
@@ -129,8 +131,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
     };
 
     waitfor(this, model, model.isDataLoaded, drawChart);
-
-};
+}; // end function chartStatesView.create(...)
 
 chartStatesView.showSortIcon = function(name) {
 	['asc', 'desc', 'alpha'].forEach(function (i) {
@@ -170,7 +171,7 @@ chartStatesView.sort = function(sort) {
 		attr('y', function(d) { return y0(d.State); });
 
 	transition.select('.y-axis').call(y.gen).selectAll('g').delay(delay);
-};
+}; // end function chartStatesView.sort(...)
 
 chartStatesView.showDetails = function(datum) {
 	// Select the bar containing datum
@@ -257,11 +258,13 @@ var chart_barStatesCtrl = {
 		this.view.hideDetails();
 	},
 
+	// TODO: See if this is necessary
 	barClicked: function() {
 
 	},
 
+	// TODO: See if this is necessary
 	bodyClicked: function() {
 		console.log('bodyClicked called with this=', + this);
 	}
-}
+}; // end var chart_barStatesCtrl

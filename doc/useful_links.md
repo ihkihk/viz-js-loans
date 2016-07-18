@@ -11,6 +11,7 @@
 
 # D3
 * [MBostock Choropleth example](http://bl.ocks.org/mbostock/4060606)
+* [MBostock Sortable Bar Chart example](http://bl.ocks.org/mbostock/3885705)
 
 # Tools
 * <https://github.com/substack/node-browserify>

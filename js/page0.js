@@ -50,7 +50,7 @@ page0View.create = function(canvas, ctrl, flShow=false)
 		attr('transform', 'translate('+this.gui.scatterCanvas.o.x+','+this.gui.scatterCanvas.o.y+')');
 
 	this.ctrl.barchartCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
-	//this.ctrl.mapCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
+	this.ctrl.mapCtrl.createView(this.gui.mapCanvas, this.ctrl, flShow=true);
 	//this.ctrl.scatterCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
 
 	this.show(flShow);
@@ -59,6 +59,7 @@ page0View.create = function(canvas, ctrl, flShow=false)
 var page0Ctrl = {
 	view : page0View,
 	barchartCtrl: chart_barStatesCtrl,
+	mapCtrl: chart_mapStatesCtrl,
 	parentCtrl: null,
 	pageShown: null,
 

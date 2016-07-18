@@ -4,4 +4,6 @@ This is a JS/D3.js viz of loan statistics based on freely available data publish
 
 The work started as a project fulfilling the requirements of the P6 (DataViz) course of Udacity's Data Analysis Nanodegree.
 
+To view the viz go to [rawgit](https://rawgit.com/ihkihk/viz-js-loans/master/index.html).
+
 (c) 2016 Ivailo Kassamakov
