@@ -12,7 +12,7 @@
 
 .bkgrnd-viz {
 
-    fill: dimgray;
+    fill: rgb(11,60,77); /*dimgray;*/
     fill-opacity: 0.6;
     stroke: black;
     stroke-width: 3px;

@@ -1,14 +1,12 @@
+"use strict;"
+
 var mapStatesView = new View();
 
 mapStatesView.gui = {
-	/*icons: {
-		'asc': {d3c: null},
-		'desc': {d3c: null},
-		'alpha': {d3c: null},
-		'details': {d3c: null}
-	},*/
 	map: {
-		body: {d3c:null, BBox: {x:null, y:null, w:null, h:null}}
+		body: { d3c: null, BBox: {x:null, y:null, w:null, h:null} },
+		path: null,
+		zoom: null
 	}
 };
 
@@ -23,79 +21,23 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 	function drawChart() {
         var map = this.gui.map.body;
 
-        map.BBox = {x:0, y:0, w:this.cView.iw, h:this.cView.ih};
+        map.BBox = {x: 0, y: 0, w: this.cView.iw, h: this.cView.ih};
 
         map.d3c = this.cView.d3c.append('g').attr('class', 'map').
             attr('transform', 'translate(' + map.BBox.x + ', ' + map.BBox.y + ')');
 
-		var active = d3.select(null);
-
 		// Create a map zoomer
-		var zoom = d3.zoom().scaleExtent([1,16]).on('zoom', zoomed);
+		this.gui.map.zoom = d3.zoom().scaleExtent([1,16]).on('zoom', zoomed);
 
-		map.d3c.call(zoom).on('click', stopPropagation, true);
+		map.d3c.call(this.gui.map.zoom).on('click', stopPropagation, true);
 
+		// TODO: Is this really needed?
 		function stopPropagation() {
 			if (d3.event.defaultPrevented) d3.event.stopPropagation();
 		}
 
         var proj = d3.geoAlbersUsa().scale(1).translate([0, 0]);
-		var path = d3.geoPath().projection(proj);
-
-        var stateClicked = function(viewCtrl) {
-
-            return function stateClicked(d) {
-            var stateAcro = model.mapFull2ShortStateName.get(d.properties.name);
-            map.d3c.select('.map-annotation').remove();
-            if (active.node() === this) {
-
-                //viewCtrl.stateClicked(stateAcro, false);
-                return resetZoom(viewCtrl);
-            }
-
-            if (active.node() != null) {
-                active.classed("active", false);
-                viewCtrl.stateClicked(model.mapFull2ShortStateName.get(active.datum().properties.name), false);
-            }
-            active = d3.select(this).classed("active", true);
-
-            var bounds = path.bounds(d),
-                dx = bounds[1][0] - bounds[0][0],
-                dy = bounds[1][1] - bounds[0][1],
-                x = (bounds[0][0] + bounds[1][0]) / 2,
-                y = (bounds[0][1] + bounds[1][1]) / 2,
-                scale = Math.max(1, Math.min(16, 0.9 / Math.max(dx / map.BBox.w, dy / map.BBox.h))),
-                translate = [map.BBox.w / 2 -  x * scale, map.BBox.h / 2 -  y * scale];
-
-            var transform = d3.zoomTransform(map.d3c).
-                translate(translate[0], translate[1]).scale(scale);
-
-            map.d3c.transition().duration(750).call(zoom.transform, transform);
-
-            // Add annotation
-            // Get the centroid of the state
-            //var bbox = d3.select(this).node().getBBox();
-            var cx = map.BBox.x + map.BBox.w/2;
-            var cy = map.BBox.y + map.BBox.h/2;
-
-            // We will draw on the chart body canvas
-            var d3c = this.gui.map.body.d3c;
-
-            // Create the annotation canvas
-            var ann = d3c.append('g').attr('class', 'map-annotation annotation');
-
-            // Draw the bubble
-            var bubble = ann.append('g').style('opacity', 0);
-            bubble.append('rect').attr('x', cx-40).attr('y', y_coord-15).attr('width', 80).attr('height', 30).
-                attr('rx', 3).attr('ry', 3);
-
-            bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).text('State:  ' + d.properties.State)
-            bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).text('Income: ' + 'Per capita income');
-
-            bubble.transition().duration(500).style('opacity', 1);
-
-            viewCtrl.stateClicked(stateAcro, true);
-		};}(this.ctrl);
+		this.gui.map.path = d3.geoPath().projection(proj);
 
 		// Create the map clip-path that coincides with the map's extents
 		map.d3c.
@@ -105,9 +47,9 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
 		// Create a scale for quantizing the continuous data into a pallette of choropleth colors
         map.scale = d3.scaleQuantize()
-            .domain([0, d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})])
+            .domain([d3.min(model.tblStatesIncome, function(d) { return d['Per capita income'];}), 
+			         d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
-
 
 
         // Find the bounds of the map and scale appropriately the projections
@@ -116,7 +58,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
         // First convert TopoJSON -> json
         var json = topojson.feature(model.topojsonUs, model.topojsonUs.objects.units);
         // Below for brevity: b=bounds, s=scale, t=translation
-        var b = path.bounds(json),
+        var b = this.gui.map.path.bounds(json),
             dx = b[1][0] - b[0][0], dy = b[1][1] - b[0][1],
             s = 0.95 / Math.max(dx / map.BBox.w, dy / map.BBox.h),
             t = [(map.BBox.w - s * (b[1][0] + b[0][0])) / 2,
@@ -124,13 +66,11 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
         proj.scale(s).translate(t);
 
-
-
 		// Map border
         map.d3c.append('rect').attr('class', 'map-border').
 			attr('x', 0).attr('y', 0).attr('height', map.BBox.h).attr('width', map.BBox.w).
 			style('fill', 'none').style('pointer-events','all').
-			on('click', resetZoom.bind(undefined, this.ctrl));
+			on('click', function(d) { this.ctrl.mapClicked(); }.bind(this));
 
         // The canvas to contain the cartography mesh
         var carto = map.d3c.append('g').attr('class', 'states').
@@ -138,10 +78,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
         // Draw the states
         carto.selectAll('path').
-            data(json.features/*, function(d) {
-                // The key function
-                return model.mapFull2ShortStateName.get(d.properties.name);
-            }*/).
+            data(json.features).
             enter().
             append('path').
             attr('class', function(d) {
@@ -150,45 +87,25 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			}).
 			classed('state', true).
             attr('id', function(d) {
-                return 'id-map-state-' + model.mapFull2ShortStateName.get(d.properties.name);
+                return 'id-map-state-' + model.mapStateName2Acro.get(d.properties.name);
             }).
-            attr('d', path).
+            attr('d', this.gui.map.path).
 			on('mouseenter', function(d) {
-                var stateAcro = model.mapFull2ShortStateName.get(d.properties.name);
+                var stateAcro = model.mapStateName2Acro.get(d.properties.name);
 				this.ctrl.mapHovered(stateAcro, true);
 			}.bind(this)).
             on('mouseout', function(d) {
-                var stateAcro = model.mapFull2ShortStateName.get(d.properties.name);
+                var stateAcro = model.mapStateName2Acro.get(d.properties.name);
                 this.ctrl.mapHovered(stateAcro, false);
             }.bind(this)).
-			on('click', stateClicked/*.bind(undefined, this.ctrl)*/);
+			on('click', function(d) { this.ctrl.stateClicked(d); }.bind(this));
 
 
 		function zoomed() {
 			carto.style("stroke-width", 1.5 / d3.event.transform.k + "px").
 				attr("transform", d3.event.transform);
 		};
-
-		function resetZoom(viewCtrl) {
-			active.classed("active", false);
-            if (active.node() != null) {
-                var stateAcro = model.mapFull2ShortStateName.get(active.datum().properties.name);
-                viewCtrl.stateClicked(stateAcro, false);
-            }
-            map.d3c.select('.map-annotation').remove();
-            active = d3.select(null);
-			map.d3c.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
-		}
-
-        /*map.d3c.append("path").
-            datum(topojson.mesh(model.topojsonUs, model.topojsonUs.objects.units,
-                function(a, b) { return true; })).
-            attr("class", "states").
-            attr("d", path);*/
-
-
-
-    }
+    } // end function drawChart(...)
 
     // Wait for data to be loaded
     function waitfor(that, obj, checkfunc, callback) {
@@ -202,11 +119,121 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function mapStatesView.create(...)
 
+
+mapStatesView.clickState = function(d) {
+	var state = this.auxSelectState(d);
+		
+	if (d.properties.active == undefined) {
+		d.properties.active = false;
+	}
+	
+	// Reset zoom. This will also deactivate any active state
+	// and remove annotations
+	this.resetZoom();
+	
+	// Toggle the active state of the currently clicked state
+	d.properties.active = !d.properties.active;
+	
+	// Toggle the active/inactive hilite of the state
+	this.toggleStateHilite(d, d.properties.active);
+	
+	// Center the map on the newly activated state, if any
+	if (d.properties.active) {
+		var bounds = this.gui.map.path.bounds(d),
+                dx = bounds[1][0] - bounds[0][0],
+                dy = bounds[1][1] - bounds[0][1],
+                x = (bounds[0][0] + bounds[1][0]) / 2,
+                y = (bounds[0][1] + bounds[1][1]) / 2,
+				bbox = this.gui.map.body.BBox,
+                scale = Math.max(1, Math.min(16,  
+				                             0.9 / Math.max(dx / bbox.w, 
+				                                            dy / bbox.h))),
+                translate = [bbox.w / 2 -  x * scale, bbox.h / 2 -  y * scale];
+
+		var transform = d3.zoomTransform(this.gui.map.body.d3c).
+			translate(translate[0], translate[1]).scale(scale);
+
+		this.gui.map.body.d3c.transition().duration(750).
+			call(this.gui.map.zoom.transform, transform);
+					
+		// Place an annotation
+		this.addDetails(d);
+	};
+};
+
+mapStatesView.getStateStatus = function(d) {
+	return !(d.properties.active == undefined || 
+		d.properties.active == false);
+};
+
+mapStatesView.resetZoom = function() {
+	// Remove all map annotations
+	this.gui.map.body.d3c.select('.map-annotation').remove();
+	
+	// Deselect any selected state
+	var active = this.gui.map.body.d3c.select('.active');
+	if (active.node() != null) {
+		this.toggleStateHilite(active.datum(), flActivate=false);
+		this.ctrl.notifyOtherCtrlStateClicked(active.datum(), false);
+	}
+	
+	// Zoom out to scale 1
+	this.gui.map.body.d3c.transition().duration(750).
+		call(this.gui.map.zoom.transform, d3.zoomIdentity);
+};
+
+mapStatesView.toggleStateHilite = function(d, flActivate) {
+	var state = this.auxSelectState(d);
+	
+	state.classed('active', flActivate);
+};
+
+mapStatesView.addDetails = function(d) {
+	// Create the annotation canvas
+	var ann = this.gui.map.body.d3c.append('g').attr('class', 'map-annotation annotation').
+		style('opacity', 0);
+	
+	var cx = this.gui.map.body.BBox.w / 2,
+		cy = this.gui.map.body.BBox.h / 2;
+		
+	// Add bubble
+	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
+		attr('width', 100).attr('height', 30).
+		attr('rx', 3).attr('ry', 3);
+
+	// Add text
+	ann.append('text').attr('x', cx-45).attr('y', cy-5).
+		text('State:  ' + model.mapStateName2Acro.get(d.properties.name));
+	ann.append('text').attr('x', cx-45).attr('y', cy+5).
+		text('Income: ' + "DEADBEEF");
+
+	ann.transition().delay(750).duration(500).style('opacity', 1);
+};
+
+mapStatesView.auxSelectState = function(p) {
+	var filter = null;
+	
+	if (p instanceof String || typeof(p) === "string") {
+		// The state is specified by name, e.g. "CA"
+		
+		// If name is acro, first expand it
+		if (p.length == 2) p = model.mapStateName2Full.get(p);
+		
+		filter = function(d) { return d.properties.name == p; };
+	} else {
+		// The state is specified e.g. via its datum Object
+		filter = function(d) { return d.properties.name == p.properties.name; }
+	}
+	
+	return this.gui.map.body.d3c.selectAll('.state').filter(filter);
+};
+
 mapStatesView.simulateMapHover = function(state, flShow) {
     var state = this.gui.map.body.d3c.select('#' + 'id-map-state-' + state);
 
     state.classed('hovered', flShow);
-}
+};
+
 
 var chart_mapStatesCtrl = {
     view: mapStatesView,
@@ -226,7 +253,33 @@ var chart_mapStatesCtrl = {
         this.view.simulateMapHover(state, flShow);
     },
 
-    stateClicked(state, flActive) {
-        this.parentCtrl.mapStateClicked(state, flActive);
-    }
+    stateClicked: function(d) {
+		this.view.clickState(d);
+		var flActive = this.view.getStateStatus(d);
+		
+		this.notifyOtherCtrlStateClicked(d, flActive);
+    },
+	
+	notifyOtherCtrlStateClicked: function(d, flActive) {
+		this.parentCtrl.mapStateClicked(model.mapStateName2Acro.get(d.properties.name), flActive);
+	},
+	
+	simulateStateClicked: function(state, flActivate) {
+		var state = this.view.auxSelectState(state);
+		
+		this.view.clickState(state.datum());
+	},
+	
+	mapClicked: function() {
+		this.view.resetZoom();
+		
+		this.parentCtrl.mapAllDeactivated();
+	},
+	
+	simulateMapClicked: function() {
+		this.view.resetZoom();
+	}
+	
 };
+
+/* EOF */

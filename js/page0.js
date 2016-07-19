@@ -85,6 +85,10 @@ var page0Ctrl = {
 
 	mapStateClicked: function(state, flShow) {
 		this.barchartCtrl.simulateBarClick(state, flShow);
+	},
+	
+	mapAllDeactivated: function() {
+		this.barchartCtrl.simulateBodyClick();
 	}
 
 };

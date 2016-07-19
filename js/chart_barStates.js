@@ -280,14 +280,12 @@ var chart_barStatesCtrl = {
 	},
 
 
-	// TODO: See if this is necessary
 	barClicked: function() {
-
+		
 	},
 
-	// TODO: See if this is necessary
 	bodyClicked: function() {
-		console.log('bodyClicked called with this=', + this);
+		
 	},
 
 	simulateBarHover: function(state, flShow) {
@@ -298,5 +296,9 @@ var chart_barStatesCtrl = {
 	simulateBarClick: function(state, flShow) {
 		// Something has been hilited in another view - respond here too
 		this.view.simulateBarClick(state, flShow);
+	},
+	
+	simulateBodyClick: function() {
+		
 	}
 }; // end var chart_barStatesCtrl
