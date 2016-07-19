@@ -175,6 +175,10 @@ storyView.createPages = function() {
 	this.ctrl.configPages();
 };
 
+
+/******************************************************************************/
+
+
 var storyCtrl = {
 	view: storyView,
 	pageCtrl: [page0Ctrl, page1Ctrl, page2Ctrl],

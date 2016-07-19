@@ -47,7 +47,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
 		// Create a scale for quantizing the continuous data into a pallette of choropleth colors
         map.scale = d3.scaleQuantize()
-            .domain([d3.min(model.tblStatesIncome, function(d) { return d['Per capita income'];}), 
+            .domain([d3.min(model.tblStatesIncome, function(d) { return d['Per capita income'];}),
 			         d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
@@ -121,22 +121,21 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
 
 mapStatesView.clickState = function(d) {
-	var state = this.auxSelectState(d);
-		
+
 	if (d.properties.active == undefined) {
 		d.properties.active = false;
 	}
-	
+
 	// Reset zoom. This will also deactivate any active state
 	// and remove annotations
 	this.resetZoom();
-	
+
 	// Toggle the active state of the currently clicked state
 	d.properties.active = !d.properties.active;
-	
+
 	// Toggle the active/inactive hilite of the state
 	this.toggleStateHilite(d, d.properties.active);
-	
+
 	// Center the map on the newly activated state, if any
 	if (d.properties.active) {
 		var bounds = this.gui.map.path.bounds(d),
@@ -145,8 +144,8 @@ mapStatesView.clickState = function(d) {
                 x = (bounds[0][0] + bounds[1][0]) / 2,
                 y = (bounds[0][1] + bounds[1][1]) / 2,
 				bbox = this.gui.map.body.BBox,
-                scale = Math.max(1, Math.min(16,  
-				                             0.9 / Math.max(dx / bbox.w, 
+                scale = Math.max(1, Math.min(16,
+				                             0.9 / Math.max(dx / bbox.w,
 				                                            dy / bbox.h))),
                 translate = [bbox.w / 2 -  x * scale, bbox.h / 2 -  y * scale];
 
@@ -155,28 +154,28 @@ mapStatesView.clickState = function(d) {
 
 		this.gui.map.body.d3c.transition().duration(750).
 			call(this.gui.map.zoom.transform, transform);
-					
+
 		// Place an annotation
 		this.addDetails(d);
 	};
 };
 
 mapStatesView.getStateStatus = function(d) {
-	return !(d.properties.active == undefined || 
+	return !(d.properties.active == undefined ||
 		d.properties.active == false);
 };
 
 mapStatesView.resetZoom = function() {
 	// Remove all map annotations
 	this.gui.map.body.d3c.select('.map-annotation').remove();
-	
+
 	// Deselect any selected state
 	var active = this.gui.map.body.d3c.select('.active');
 	if (active.node() != null) {
 		this.toggleStateHilite(active.datum(), flActivate=false);
 		this.ctrl.notifyOtherCtrlStateClicked(active.datum(), false);
 	}
-	
+
 	// Zoom out to scale 1
 	this.gui.map.body.d3c.transition().duration(750).
 		call(this.gui.map.zoom.transform, d3.zoomIdentity);
@@ -184,7 +183,7 @@ mapStatesView.resetZoom = function() {
 
 mapStatesView.toggleStateHilite = function(d, flActivate) {
 	var state = this.auxSelectState(d);
-	
+
 	state.classed('active', flActivate);
 };
 
@@ -192,10 +191,10 @@ mapStatesView.addDetails = function(d) {
 	// Create the annotation canvas
 	var ann = this.gui.map.body.d3c.append('g').attr('class', 'map-annotation annotation').
 		style('opacity', 0);
-	
+
 	var cx = this.gui.map.body.BBox.w / 2,
 		cy = this.gui.map.body.BBox.h / 2;
-		
+
 	// Add bubble
 	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
 		attr('width', 100).attr('height', 30).
@@ -212,19 +211,19 @@ mapStatesView.addDetails = function(d) {
 
 mapStatesView.auxSelectState = function(p) {
 	var filter = null;
-	
+
 	if (p instanceof String || typeof(p) === "string") {
 		// The state is specified by name, e.g. "CA"
-		
+
 		// If name is acro, first expand it
 		if (p.length == 2) p = model.mapStateName2Full.get(p);
-		
+
 		filter = function(d) { return d.properties.name == p; };
 	} else {
 		// The state is specified e.g. via its datum Object
 		filter = function(d) { return d.properties.name == p.properties.name; }
 	}
-	
+
 	return this.gui.map.body.d3c.selectAll('.state').filter(filter);
 };
 
@@ -233,6 +232,9 @@ mapStatesView.simulateMapHover = function(state, flShow) {
 
     state.classed('hovered', flShow);
 };
+
+
+/******************************************************************************/
 
 
 var chart_mapStatesCtrl = {
@@ -256,30 +258,30 @@ var chart_mapStatesCtrl = {
     stateClicked: function(d) {
 		this.view.clickState(d);
 		var flActive = this.view.getStateStatus(d);
-		
+
 		this.notifyOtherCtrlStateClicked(d, flActive);
     },
-	
+
 	notifyOtherCtrlStateClicked: function(d, flActive) {
 		this.parentCtrl.mapStateClicked(model.mapStateName2Acro.get(d.properties.name), flActive);
 	},
-	
-	simulateStateClicked: function(state, flActivate) {
+
+	simulateStateClick: function(state, flActivate) {
 		var state = this.view.auxSelectState(state);
-		
+
 		this.view.clickState(state.datum());
 	},
-	
+
 	mapClicked: function() {
 		this.view.resetZoom();
-		
+
 		this.parentCtrl.mapAllDeactivated();
 	},
-	
-	simulateMapClicked: function() {
+
+	simulateMapClick: function() {
 		this.view.resetZoom();
 	}
-	
+
 };
 
 /* EOF */

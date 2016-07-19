@@ -20,15 +20,11 @@
 	<title>DataViz of Prosper loans (DATAN P6)</title>
 
 	<!--Third party CSS-->
-	<link href='https://fonts.googleapis.com/css?family=Old+Standard+TT' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Vollkorn:400,400italic' rel='stylesheet' type='text/css'>
 
 	<!--Third party JS-->
 	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
 	<script src="//d3js.org/topojson.v1.min.js"></script>
-	<script src='https://code.jquery.com/jquery-3.1.0.min.js'
-			integrity='sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s='
-			crossorigin='anonymous'></script>
 
 	<!--Own JS-->
 	<script type='text/javascript' src='js/dataModel.js'></script>
@@ -56,7 +52,7 @@
 		}
 
 		body {
-			font-family: 'Old Standard TT', Verdana, sans-serif;
+			font-family: Verdana, sans-serif;
 		}
 
 		h1 {
@@ -101,7 +97,7 @@
 	</div>
 
 	<script type='text/javascript'>
-	'option strict';
+	'use strict;'
 
 	var mainCtrl = {
 		storyCtrl: storyCtrl,
