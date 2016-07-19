@@ -56,6 +56,10 @@ page0View.create = function(canvas, ctrl, flShow=false)
 	this.show(flShow);
 }; // end function create(...)
 
+
+/******************************************************************************/
+
+
 var page0Ctrl = {
 	view : page0View,
 	barchartCtrl: chart_barStatesCtrl,
@@ -86,9 +90,16 @@ var page0Ctrl = {
 	mapStateClicked: function(state, flShow) {
 		this.barchartCtrl.simulateBarClick(state, flShow);
 	},
-	
+
 	mapAllDeactivated: function() {
 		this.barchartCtrl.simulateBodyClick();
-	}
+	},
 
+	barStateClicked: function(state, flShow) {
+		this.mapCtrl.simulateStateClick(state, flShow);
+	},
+
+	barAllDeactivated: function() {
+		this.mapCtrl.simulateMapClick();
+	},
 };

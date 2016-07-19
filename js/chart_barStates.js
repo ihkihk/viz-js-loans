@@ -46,11 +46,21 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 		xAxis.gen = d3.axisBottom().scale(xAxis.scale);
 		xAxis.d3c.call(xAxis.gen);
 
+		// Draw an invisible rectangle under the chart whose clicking will deactivate
+		// any activated bar
+
+
 		// Draw the chart itself
 		var body = this.gui.chart.body;
 		body.BBox = {x: yAxis.BBox.w, y: yAxis.BBox.y, h: yAxis.BBox.h, w: xAxis.BBox.w};
 		body.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + body.BBox.x + ',' + body.BBox.y + ')').attr('class', 'chart chart-bar');
-		body.d3c.on('click', function() { this.ctrl.bodyClicked();}.bind(this));
+
+		body.d3c.append('rect').attr('x', 0).attr('y', 0).
+			attr('width', body.BBox.w).attr('height', body.BBox.h).
+			style('visibility', 'hidden').
+			style('pointer-events', 'all').
+			on('click', function() { this.ctrl.bodyClicked();}.bind(this));
+
 		body.d3c.selectAll(".bar").data(model.tblStatesIncome).enter().
 			append('rect').attr('class', 'bar').
 			attr('y', function(d) { return yAxis.scale(d['State']); } ).
@@ -61,7 +71,18 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 			on('mouseenter', function(d) {
 				this.ctrl.barHovered(d, true); }.bind(this)).
 			on('mouseout', function(d) {
-				this.ctrl.barHovered(d, false); }.bind(this));
+				this.ctrl.barHovered(d, false); }.bind(this)).
+			on('click', function(d) {
+				this.ctrl.barClicked(d); }.bind(this));
+
+		// This is really needed (I don't understand why), but without it
+		// the bars get activated on click and then immediately lose
+		// their active status
+		body.d3c.on('click', stopPropagation, true);
+
+		function stopPropagation() {
+			if (d3.event.defaultPrevented) d3.event.stopPropagation();
+		}
 
 		// Put axis titles
 		xAxis.d3c.append('text').
@@ -115,7 +136,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 			on('click', function() { this.ctrl.iconDetailsClicked();}.bind(this));
 
 
-		// Show the info first in descending sort (top is highest)
+		// Show the info first in descending sort (highest amount at the top)
 		this.ctrl.iconSortDescClicked();
 
 		// Show details by default
@@ -222,10 +243,54 @@ chartStatesView.simulateBarHover = function(state, flShow) {
 }; // end function chartStatesView.simulateBarHover(...)
 
 chartStatesView.simulateBarClick = function(state, flShow) {
-	var bar = this.gui.chart.body.d3c.select('#' + 'id-bar-state-' + state);
+	var bar = this.auxSelectBar(state);
 
 	bar.classed('active', flShow);
+};
+
+chartStatesView.clickBar = function(d) {
+
+	if (d.active == undefined) {
+		d.active = false;
+	}
+
+	this.deactivateBar();
+
+	// Toggle the active state of the currently clicked bar
+	d.active = !d.active;
+
+	// Toggle the active/inactive hilite of the bar
+	this.toggleBarHilite(d, d.active);
+};
+
+chartStatesView.deactivateBar = function() {
+	var active = this.gui.chart.body.d3c.select(".active");
+
+	if (active.node() != null) {
+		this.toggleBarHilite(active.datum(), flActivate=false);
+		this.ctrl.notifyOtherCtrlBarClicked(active.datum(), false);
+	}
+};
+
+chartStatesView.getBarStatus = function(d) {
+	return d.active;
 }
+
+chartStatesView.toggleBarHilite = function(d, flActivate) {
+	var bar = this.auxSelectBar(d);
+
+	bar.classed('active', flActivate);
+}
+
+chartStatesView.auxSelectBar = function(d) {
+	if (d instanceof String || typeof(d) === "string") {
+		return this.gui.chart.body.d3c.select('#' + 'id-bar-state-' + d);
+	} else {
+		return this.gui.chart.body.d3c.select('#' + 'id-bar-state-' + d.State);
+	}
+};
+
+/******************************************************************************/
 
 
 var chart_barStatesCtrl = {
@@ -279,13 +344,21 @@ var chart_barStatesCtrl = {
 		}
 	},
 
+	barClicked: function(d) {
+		this.view.clickBar(d);
+		var flActive = this.view.getBarStatus(d);
 
-	barClicked: function() {
-		
+		this.notifyOtherCtrlBarClicked(d, flActive);
+	},
+
+	notifyOtherCtrlBarClicked: function(d, flActive) {
+		this.parentCtrl.barStateClicked(d.State, flActive);
 	},
 
 	bodyClicked: function() {
-		
+		this.view.deactivateBar();
+
+		this.parentCtrl.barAllDeactivated();
 	},
 
 	simulateBarHover: function(state, flShow) {
@@ -297,8 +370,9 @@ var chart_barStatesCtrl = {
 		// Something has been hilited in another view - respond here too
 		this.view.simulateBarClick(state, flShow);
 	},
-	
+
 	simulateBodyClick: function() {
-		
+		this.view.deactivateBar();
 	}
+
 }; // end var chart_barStatesCtrl
