@@ -3,6 +3,7 @@
 var model = {
     topojsonUs: null,
     mapStateIncome: d3.map(),
+    mapFull2ShortStateName: d3.map(),
     tblStatesIncome: null,
     flDataLoaded: false,
 
@@ -28,6 +29,7 @@ var model = {
         r['StateFull'] = d['StateFull'];
 
         this.mapStateIncome.set(r['StateFull'], r['Per capita income']);
+        this.mapFull2ShortStateName.set(r['StateFull'], r['State']);
 
 		return r;
     }

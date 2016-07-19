@@ -57,10 +57,11 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 			attr('height', yAxis.scale.bandwidth()).
 			attr('x', 0).
 			attr('width', function(d) { return xAxis.scale(d['Per capita income']);}).
+			attr('id', function(d) { return 'id-bar-state-' + d['State']; }).
 			on('mouseenter', function(d) {
-				this.ctrl.barHoverStart(d); }.bind(this)).
+				this.ctrl.barHovered(d, true); }.bind(this)).
 			on('mouseout', function(d) {
-				this.ctrl.barHoverEnd(d); }.bind(this));
+				this.ctrl.barHovered(d, false); }.bind(this));
 
 		// Put axis titles
 		xAxis.d3c.append('text').
@@ -193,7 +194,7 @@ chartStatesView.showDetails = function(datum) {
 	x_coord = x(datum['Per capita income']);
 
 	// Draw the annotation line
-	var ann = d3c.append('g').attr('class', 'annotation');
+	var ann = d3c.append('g').attr('class', 'bar-annotation annotation');
 	ann.append('line').attr('x1', x_coord).attr('y1', y_coord).
 		attr('x2', x_coord).attr('y2', y_coord).transition().duration(500).attr('y2', (this.gui.chart.body.BBox.h));
 
@@ -209,8 +210,23 @@ chartStatesView.showDetails = function(datum) {
 }; // end function chartStatesView.showDetails(...)
 
 chartStatesView.hideDetails = function() {
-	this.gui.chart.body.d3c.select('.annotation').remove();
+	this.gui.chart.body.d3c.select('.bar-annotation').remove();
 }; // end function chartStatesView.hideDetails(...)
+
+chartStatesView.simulateBarHover = function(state, flShow) {
+    var bar = this.gui.chart.body.d3c.select('#' + 'id-bar-state-' + state);
+
+    bar.classed('hovered', flShow);
+
+	this.ctrl.handleDetails(bar.datum(), flShow);
+}; // end function chartStatesView.simulateBarHover(...)
+
+chartStatesView.simulateBarClick = function(state, flShow) {
+	var bar = this.gui.chart.body.d3c.select('#' + 'id-bar-state-' + state);
+
+	bar.classed('active', flShow);
+}
+
 
 var chart_barStatesCtrl = {
     view: chartStatesView,
@@ -248,15 +264,21 @@ var chart_barStatesCtrl = {
 		this.view.gui.icons['details'].d3c.classed('icon-inactive', !this.details);
 	},
 
-	barHoverStart: function(d) {
-		if (!this.details) return;
+	barHovered: function(d, flShow) {
+		// Propagate event to the parent controller so that other views can respond too
+		this.parentCtrl.barHovered(d.State, flShow);
 
-		this.view.showDetails(d);
+		this.handleDetails(d, flShow);
 	},
 
-	barHoverEnd: function(d) {
-		this.view.hideDetails();
+	handleDetails: function(d, flShow) {
+		if (flShow && this.details) {
+			this.view.showDetails(d);
+		} else {
+			this.view.hideDetails();
+		}
 	},
+
 
 	// TODO: See if this is necessary
 	barClicked: function() {
@@ -266,5 +288,15 @@ var chart_barStatesCtrl = {
 	// TODO: See if this is necessary
 	bodyClicked: function() {
 		console.log('bodyClicked called with this=', + this);
+	},
+
+	simulateBarHover: function(state, flShow) {
+		// Something has been hilited in another view - respond here too
+		this.view.simulateBarHover(state, flShow);
+	},
+
+	simulateBarClick: function(state, flShow) {
+		// Something has been hilited in another view - respond here too
+		this.view.simulateBarClick(state, flShow);
 	}
 }; // end var chart_barStatesCtrl

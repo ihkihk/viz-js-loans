@@ -73,5 +73,18 @@ var page0Ctrl = {
 	{
 		this.pageShown = flShow;
 		View.prototype.show.call(this.view, flShow);
+	},
+
+	barHovered: function(state, flShow) {
+		this.mapCtrl.simulateMapHover(state, flShow);
+	},
+
+	mapHovered: function(state, flShow) {
+		this.barchartCtrl.simulateBarHover(state, flShow);
+	},
+
+	mapStateClicked: function(state, flShow) {
+		this.barchartCtrl.simulateBarClick(state, flShow);
 	}
+
 };

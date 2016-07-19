@@ -100,6 +100,14 @@
 
 }
 
+.bar.active {
+    fill: orange;
+}
+
+.bar:hover, .bar:not(.active).hovered {
+    fill: brown;
+}
+
 .icon {
     opacity: 0.5;
 }
@@ -124,9 +132,7 @@
     /*opacity: 1;*/
 }
 
-.bar:hover {
-    fill: brown;
-}
+
 
 .y-axis path {
     display: none;
@@ -162,6 +168,11 @@
     fill: orange;
 
 }
+
+.map .state:not(.active):hover, .map .state:not(.active).hovered {
+    fill: brown;
+}
+
 
 .q0-9 { fill:rgb(247,251,255); }
 .q1-9 { fill:rgb(222,235,247); }
