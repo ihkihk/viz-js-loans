@@ -78,6 +78,10 @@
 	fill: floralwhite;
 }
 
+.bkgrnd-scatter {
+	fill: floralwhite;
+}
+
 .axis {
     font: 10px sans-serif;
 }
@@ -134,7 +138,7 @@
 
 
 
-.y-axis path {
+.y-axis:not(.cont-axis) path {
     display: none;
 }
 

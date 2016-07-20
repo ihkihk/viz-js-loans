@@ -27,8 +27,6 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 		var yAxis = this.gui.chart.yAxis;
 		yAxis.BBox = {x:0, y:40, h:this.cView.ih-40-40, w:40};
 		yAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + (yAxis.BBox.x + yAxis.BBox.w) + ',' + yAxis.BBox.y + ')').attr('class', 'axis y-axis');
-		/*yAxis.d3c.append('line').attr('x1', yAxis.BBox.w).attr('x2', yAxis.BBox.w).
-			attr('y1', 0).attr('y2', yAxis.BBox.h);*/
 		yAxis.scale = d3.scaleBand().rangeRound([0, yAxis.BBox.h]).paddingInner(0.2).paddingOuter(0);
 		yAxis.scale.domain(model.tblStatesIncome.map(function(d) { return d['State']; }));
 		yAxis.gen = d3.axisLeft().scale(yAxis.scale);
@@ -39,8 +37,6 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 		xAxis.BBox = {x:yAxis.BBox.w, y:yAxis.BBox.y+yAxis.BBox.h, h:this.cView.ih-yAxis.BBox.h,
 			w:this.cView.iw-yAxis.BBox.w-40};
 		xAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + xAxis.BBox.x + ',' + xAxis.BBox.y + ')').attr('class', 'axis x-axis');
-		/*xAxis.d3c.append('line').attr('x1', 0).attr('x2', xAxis.BBox.w).
-			attr('y1', 0).attr('y2', 0);*/
 		xAxis.scale = d3.scaleLinear().range([0, xAxis.BBox.w]);
 		xAxis.scale.domain([0, d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})]);
 		xAxis.gen = d3.axisBottom().scale(xAxis.scale);

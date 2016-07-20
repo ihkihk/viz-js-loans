@@ -23,22 +23,21 @@ page0View.create = function(canvas, ctrl, flShow=false)
 
 	dbgRect(this.cView.d3c, 0, 0, this.cView.iw, this.cView.ih, 'green');
 
-	// Create the scatter plot
-	this.gui.scatterCanvas.size.w = this.cView.iw/2;
-	this.gui.scatterCanvas.size.h = this.cView.ih/2;
-
 	this.gui.barchartCanvas.size.w = this.cView.iw/2;
 	this.gui.barchartCanvas.size.h = this.cView.ih;
 
 	this.gui.mapCanvas.size.w = this.cView.iw/2;
 	this.gui.mapCanvas.size.h = this.cView.ih/2;
 
+	this.gui.scatterCanvas.size.w = this.cView.iw/2;
+	this.gui.scatterCanvas.size.h = this.cView.ih/2;
+	
 	this.gui.barchartCanvas.o.x = 0;
 	this.gui.barchartCanvas.o.y = 0;
 	this.gui.mapCanvas.o.x = this.gui.barchartCanvas.size.w;
 	this.gui.mapCanvas.o.y = 0;
 	this.gui.scatterCanvas.o.x = this.gui.barchartCanvas.size.w;
-	this.gui.scatterCanvas.o.y = this.gui.mapCanvas.size.w;
+	this.gui.scatterCanvas.o.y = this.gui.mapCanvas.size.h;
 
 	this.gui.barchartCanvas.d3c = this.cView.d3c.append('g').
 		attr('transform', 'translate('+this.gui.barchartCanvas.o.x+','+this.gui.barchartCanvas.o.y+')');
@@ -51,7 +50,7 @@ page0View.create = function(canvas, ctrl, flShow=false)
 
 	this.ctrl.barchartCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
 	this.ctrl.mapCtrl.createView(this.gui.mapCanvas, this.ctrl, flShow=true);
-	//this.ctrl.scatterCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
+	this.ctrl.scatterCtrl.createView(this.gui.scatterCanvas, this.ctrl, flShow=true);
 
 	this.show(flShow);
 }; // end function create(...)
@@ -64,6 +63,7 @@ var page0Ctrl = {
 	view : page0View,
 	barchartCtrl: chart_barStatesCtrl,
 	mapCtrl: chart_mapStatesCtrl,
+	scatterCtrl: chart_scatterCtrl,
 	parentCtrl: null,
 	pageShown: null,
 

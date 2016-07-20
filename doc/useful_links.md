@@ -14,6 +14,8 @@
 * [MBostock Sortable Bar Chart example](http://bl.ocks.org/mbostock/3885705)
 * [MBostock Zoom to Bounding Box II example](https://bl.ocks.org/mbostock/9656675)
 * [Centering a map](https://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object)
+* [MBostock Dispatching custom events](https://bl.ocks.org/mbostock/5872848)
+* [Mouse events](http://bl.ocks.org/hlucasfranca/f133da4493553963e710)
 
 # Tools
 * <https://github.com/substack/node-browserify>

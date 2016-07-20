@@ -6,6 +6,7 @@ var model = {
     mapStateName2Full: d3.map(),
 	mapStateName2Acro: d3.map(),
     tblStatesIncome: null,
+	tblLoanIncome: [],
     flDataLoaded: false,
 
     loadStatesTable: function(dataArray) {
@@ -33,6 +34,12 @@ var model = {
         this.mapStateName2Full.set(r['State'], r['StateFull']);
         this.mapStateName2Acro.set(r['StateFull'], r['State']);
 		
+		this.tblLoanIncome.push({
+			name: r.State,
+			income: r['Per capita income'],
+			loan: r['Per capita income'] + Math.random()*100,
+		});
+				
 		return r;
     }
 };
