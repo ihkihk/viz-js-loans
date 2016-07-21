@@ -1,3 +1,5 @@
+#!python
+
 import SimpleHTTPServer
 import SocketServer
 
