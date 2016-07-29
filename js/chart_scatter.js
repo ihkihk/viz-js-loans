@@ -21,18 +21,18 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 	function drawChart() {
         var chart = this.gui.chart;
 		var bubbleRadius = 10;
-		
+
 		// Y-axis
 		var yAxis = chart.yAxis;
 		yAxis.BBox = {x:0, y:45, h:this.cView.ih-45-40, w:45};
-		
+
 		var xAxis = this.gui.chart.xAxis;
 		xAxis.BBox = {x:yAxis.BBox.w, y:yAxis.BBox.y+yAxis.BBox.h, h:this.cView.ih-yAxis.BBox.h,
 			w:this.cView.iw-yAxis.BBox.w-40};
-			
+
 		// The chart can take the whole area of the view
 		chart.body.BBox = {x: yAxis.BBox.w, y: yAxis.BBox.y, h: yAxis.BBox.h, w: xAxis.BBox.w};
-		
+
 		yAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + (yAxis.BBox.x + yAxis.BBox.w) + ',' + yAxis.BBox.y + ')').attr('class', 'axis y-axis cont-axis');
 		yAxis.scale = d3.scaleLinear()
             .domain([d3.min(model.tblLoanIncome, function(d) { return d.loan;}),
@@ -42,7 +42,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 		yAxis.d3c.call(yAxis.gen);
 
 		// X-axis
-		
+
 		xAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + xAxis.BBox.x + ',' + xAxis.BBox.y + ')').attr('class', 'axis x-axis cont-axis');
 		// Create a scale for the continuous x and y data
         xAxis.scale = d3.scaleLinear()
@@ -51,7 +51,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
             .range([0+bubbleRadius+2, chart.body.BBox.w-bubbleRadius-2]);
 		xAxis.gen = d3.axisBottom().scale(xAxis.scale);
 		xAxis.d3c.call(xAxis.gen);
-		
+
 		// Put axis titles
 		xAxis.d3c.append('text').
 			attr('transform', 'translate(' + xAxis.BBox.w/2 + ',' + (xAxis.BBox.h/2-15)+ ')').
@@ -68,7 +68,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 			attr('class', 'title').
 			style('fill', 'black').
 			style('text-anchor', 'end').text('Loan [$]');
-			
+
         //chart.body.BBox = {x: 0, y: 0, w: this.cView.iw, h: this.cView.ih};
 
         chart.body.d3c = this.cView.d3c.append('g').attr('class', 'scatter').
@@ -83,11 +83,11 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 
 
 
-		// Create a rectangle that serves to catch all clicks outside of bubbles 
+		// Create a rectangle that serves to catch all clicks outside of bubbles
         chart.body.d3c.append('rect').attr('class', 'scatter-border').
 			attr('x', 0).attr('y', 0).attr('height', chart.body.BBox.h).attr('width', chart.body.BBox.w).
 			style('fill', 'none').style('pointer-events', 'all').
-			on('click', function(d) { this.ctrl.mapClicked(); }.bind(this));
+			on('click', function(d) { this.ctrl.chartClicked(); }.bind(this));
 
         // The canvas to contain the bubble mesh
         var bubbles = chart.body.d3c.append('g').attr('class', 'bubbles').
@@ -108,10 +108,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
             }).
             attr('cx', function(d) { return chart.xAxis.scale(d.income);} ).
 			attr('cy', function(d) { return chart.yAxis.scale(d.loan);} ).
-			attr('r', 10).style('fill', 'lightBlue').
-			style('opacity', 0.6).
-			style('pointer-events', 'all').
-			style('stroke', 'black').
+			attr('r', 10).
 			on('mouseenter', function(d) {
                 this.ctrl.bubbleHovered(d.name, true);
 			}.bind(this)).
@@ -154,7 +151,7 @@ scatterView.clickBubble = function(d) {
 	d.active = !d.active;
 
 	// Toggle the active/inactive hilite of the state
-	this.toggleStateHilite(d, d.active);
+	this.toggleBubbleHilite(d, d.active);
 
 	// Center the map on the newly activated state, if any
 /*	if (d.active) {
@@ -206,6 +203,49 @@ scatterView.toggleBubbleHilite = function(d, flActivate) {
 
 	//state.classed('active', flActivate);
 };
+
+scatterView.showDetails = function(state) {
+	// Select the bubble for the given state
+	var datum = this.cView.d3c.selectAll('.bubble').filter(function(d) {
+		return d.name == state;
+	}).datum();
+
+	// Delete any previous annotation
+	this.hideDetails();
+
+	// We will draw on the chart body canvas
+	var d3c = this.gui.chart.body.d3c;
+
+	// Obtain the tip of the bar
+	var y = this.gui.chart.yAxis.scale;
+	var x = this.gui.chart.xAxis.scale;
+
+	y_coord = y(datum.loan);
+	x_coord = x(datum.income);
+
+	// Draw the annotation lines
+	var ann = d3c.append('g').attr('class', 'scatter-annotation annotation');
+	ann.append('line').attr('x1', x_coord).attr('y1', y_coord).
+		attr('x2', x_coord).attr('y2', y_coord).transition().duration(500).attr('y2', (this.gui.chart.body.BBox.h));
+
+	ann.append('line').attr('x1', x_coord).attr('y1', y_coord).
+		attr('x2', x_coord).attr('y2', y_coord).transition().duration(500).attr('x2', 0);
+
+	// Draw the bubble
+	var bubble = ann.append('g').style('opacity', 0);
+	bubble.append('rect').attr('x', x_coord-25).attr('y', y_coord-35).attr('width', 80).attr('height', 30).
+		attr('rx', 3).attr('ry', 3);
+
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).text('State:  ' + datum.name)
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).text('Income: ' + datum.income);
+
+	bubble.transition().duration(500).style('opacity', 1);
+}; // end function scatterView.showDetails(...)
+
+scatterView.hideDetails = function() {
+	this.gui.chart.body.d3c.select('.scatter-annotation').remove();
+}; // end function scatterView.hideDetails(...)
+
 /*
 mapStatesView.addDetails = function(d) {
 	// Create the annotation canvas
@@ -248,9 +288,11 @@ mapStatesView.auxSelectState = function(p) {
 };*/
 
 scatterView.simulateChartHover = function(state, flShow) {
-    //var state = this.gui.map.body.d3c.select('#' + 'id-map-state-' + state);
+	var bubble = this.gui.chart.body.d3c.select('#' + 'id-scatter-state-' + state);
 
-    //state.classed('hovered', flShow);
+	bubble.classed('hovered', flShow);
+
+	this.ctrl.handleDetails(state, flShow);
 };
 
 
@@ -268,8 +310,18 @@ var chart_scatterCtrl = {
 
     bubbleHovered: function(state, flShow) {
         // Push up this event to the parent controller so that other views can respond
-        //this.parentCtrl.mapHovered(state, flShow);
+        this.parentCtrl.bubbleHovered(state, flShow);
+
+		this.handleDetails(state, flShow);
     },
+
+	handleDetails: function(state, flShow) {
+		if (flShow) {
+			this.view.showDetails(state);
+		} else {
+			this.view.hideDetails();
+		}
+	},
 
     simulateBubbleHover: function(state, flShow) {
         this.view.simulateChartHover(state, flShow);

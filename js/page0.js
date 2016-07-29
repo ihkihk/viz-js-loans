@@ -31,7 +31,7 @@ page0View.create = function(canvas, ctrl, flShow=false)
 
 	this.gui.scatterCanvas.size.w = this.cView.iw/2;
 	this.gui.scatterCanvas.size.h = this.cView.ih/2;
-	
+
 	this.gui.barchartCanvas.o.x = 0;
 	this.gui.barchartCanvas.o.y = 0;
 	this.gui.mapCanvas.o.x = this.gui.barchartCanvas.size.w;
@@ -81,25 +81,46 @@ var page0Ctrl = {
 
 	barHovered: function(state, flShow) {
 		this.mapCtrl.simulateMapHover(state, flShow);
+		this.scatterCtrl.simulateBubbleHover(state, flShow);
+	},
+
+	bubbleHovered: function(state, flShow) {
+		this.mapCtrl.simulateMapHover(state, flShow);
+		this.barchartCtrl.simulateBarHover(state, flShow);
 	},
 
 	mapHovered: function(state, flShow) {
 		this.barchartCtrl.simulateBarHover(state, flShow);
+		this.scatterCtrl.simulateBubbleHover(state, flShow);
 	},
 
 	mapStateClicked: function(state, flShow) {
 		this.barchartCtrl.simulateBarClick(state, flShow);
+		this.scatterCtrl.simulateBubbleClick(state, flShow);
 	},
 
 	mapAllDeactivated: function() {
 		this.barchartCtrl.simulateBodyClick();
+		this.scatterCtrl.simulateChartClick();
 	},
 
 	barStateClicked: function(state, flShow) {
 		this.mapCtrl.simulateStateClick(state, flShow);
+		this.scatterCtrl.simulateBubbleClick(state, flShow);
 	},
 
 	barAllDeactivated: function() {
 		this.mapCtrl.simulateMapClick();
+		this.scatterCtrl.simulateChartClick();
+	},
+
+	bubbleClicked: function(state, flShow) {
+		this.mapCtrl.simulateStateClick(state, flShow);
+		this.barchartCtrl.simulateBarClick();
+	},
+
+	bubbleAllDeactivated: function() {
+		this.mapCtrl.simulateMapClick();
+		this.barchartCtrl.simulateBodyClick();
 	},
 };

@@ -192,4 +192,17 @@
     stroke: black;
 	shape-rendering: crispEdges;
 }
+
+.scatter .bubble {
+    fill: lightBlue;
+    opacity: 0.6;
+    pointer-events: all;
+    stroke: black;
+}
+
+.scatter .bubble:hover, .scatter .bubble.hovered {
+    fill: brown;
+    opacity: 1;
+}
+
 /* EOF */
