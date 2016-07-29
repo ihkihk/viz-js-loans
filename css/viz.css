@@ -205,4 +205,8 @@
     opacity: 1;
 }
 
+.scatter .bubble.active:not(hover) {
+    fill: orange;
+    opacity: 1;
+}
 /* EOF */

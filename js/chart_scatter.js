@@ -143,9 +143,7 @@ scatterView.clickBubble = function(d) {
 		d.active = false;
 	}
 
-	// Reset zoom. This will also deactivate any active state
-	// and remove annotations
-//	this.resetZoom();
+	this.deactivateBubbles();
 
 	// Toggle the active state of the currently clicked state
 	d.active = !d.active;
@@ -153,55 +151,21 @@ scatterView.clickBubble = function(d) {
 	// Toggle the active/inactive hilite of the state
 	this.toggleBubbleHilite(d, d.active);
 
-	// Center the map on the newly activated state, if any
-/*	if (d.active) {
-		var bounds = this.gui.map.path.bounds(d),
-                dx = bounds[1][0] - bounds[0][0],
-                dy = bounds[1][1] - bounds[0][1],
-                x = (bounds[0][0] + bounds[1][0]) / 2,
-                y = (bounds[0][1] + bounds[1][1]) / 2,
-				bbox = this.gui.map.body.BBox,
-                scale = Math.max(1, Math.min(16,
-				                             0.9 / Math.max(dx / bbox.w,
-				                                            dy / bbox.h))),
-                translate = [bbox.w / 2 -  x * scale, bbox.h / 2 -  y * scale];
+};
 
-		var transform = d3.zoomTransform(this.gui.map.body.d3c).
-			translate(translate[0], translate[1]).scale(scale);
-
-		this.gui.map.body.d3c.transition().duration(750).
-			call(this.gui.map.zoom.transform, transform);
-
-		// Place an annotation
-		this.addDetails(d);
-	};*/
+scatterView.deactivateBubbles = function() {
+	this.gui.chart.body.d3c.selectAll('.bubble.active').classed('active', false);
 };
 
 scatterView.getBubbleStatus = function(d) {
 	return !(d.active == undefined ||
 		d.active == false);
 };
-/*
-mapStatesView.resetZoom = function() {
-	// Remove all map annotations
-	this.gui.map.body.d3c.select('.map-annotation').remove();
-
-	// Deselect any selected state
-	var active = this.gui.map.body.d3c.select('.active');
-	if (active.node() != null) {
-		this.toggleStateHilite(active.datum(), flActivate=false);
-		this.ctrl.notifyOtherCtrlStateClicked(active.datum(), false);
-	}
-
-	// Zoom out to scale 1
-	this.gui.map.body.d3c.transition().duration(750).
-		call(this.gui.map.zoom.transform, d3.zoomIdentity);
-};*/
 
 scatterView.toggleBubbleHilite = function(d, flActivate) {
-	//var state = this.auxSelectState(d);
+	var bubble = this.auxSelectState(d);
 
-	//state.classed('active', flActivate);
+	bubble.classed('active', flActivate);
 };
 
 scatterView.showDetails = function(state) {
@@ -246,46 +210,23 @@ scatterView.hideDetails = function() {
 	this.gui.chart.body.d3c.select('.scatter-annotation').remove();
 }; // end function scatterView.hideDetails(...)
 
-/*
-mapStatesView.addDetails = function(d) {
-	// Create the annotation canvas
-	var ann = this.gui.map.body.d3c.append('g').attr('class', 'map-annotation annotation').
-		style('opacity', 0);
-
-	var cx = this.gui.map.body.BBox.w / 2,
-		cy = this.gui.map.body.BBox.h / 2;
-
-	// Add bubble
-	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
-		attr('width', 100).attr('height', 30).
-		attr('rx', 3).attr('ry', 3);
-
-	// Add text
-	ann.append('text').attr('x', cx-45).attr('y', cy-5).
-		text('State:  ' + model.mapStateName2Acro.get(d.properties.name));
-	ann.append('text').attr('x', cx-45).attr('y', cy+5).
-		text('Income: ' + "DEADBEEF");
-
-	ann.transition().delay(750).duration(500).style('opacity', 1);
-};*/
-/*
-mapStatesView.auxSelectState = function(p) {
+scatterView.auxSelectState = function(p) {
 	var filter = null;
 
 	if (p instanceof String || typeof(p) === "string") {
 		// The state is specified by name, e.g. "CA"
 
-		// If name is acro, first expand it
-		if (p.length == 2) p = model.mapStateName2Full.get(p);
+		// If name is full, first convert to acro
+		if (p.length > 2) p = model.mapStateName2Acro.get(p);
 
-		filter = function(d) { return d.properties.name == p; };
+		filter = function(d) { return d.name == p; };
 	} else {
 		// The state is specified e.g. via its datum Object
-		filter = function(d) { return d.properties.name == p.properties.name; }
+		filter = function(d) { return d.name == p.name; }
 	}
 
-	return this.gui.map.body.d3c.selectAll('.state').filter(filter);
-};*/
+	return this.gui.chart.body.d3c.selectAll('.bubble').filter(filter);
+};
 
 scatterView.simulateChartHover = function(state, flShow) {
 	var bubble = this.gui.chart.body.d3c.select('#' + 'id-scatter-state-' + state);
@@ -295,6 +236,9 @@ scatterView.simulateChartHover = function(state, flShow) {
 	this.ctrl.handleDetails(state, flShow);
 };
 
+scatterView.getBubbleStatus = function(d) {
+	return d.active;
+};
 
 /******************************************************************************/
 
@@ -328,20 +272,20 @@ var chart_scatterCtrl = {
     },
 
     bubbleClicked: function(d) {
-		//this.view.clickState(d);
-		//var flActive = this.view.getStateStatus(d);
+		this.view.clickBubble(d);
+		var flActive = this.view.getBubbleStatus(d);
 
 		this.notifyOtherCtrlBubbleClicked(d, flActive);
     },
 
 	notifyOtherCtrlBubbleClicked: function(d, flActive) {
-		//this.parentCtrl.mapStateClicked(model.mapStateName2Acro.get(d.properties.name), flActive);
+		this.parentCtrl.bubbleClicked(d.name, flActive);
 	},
 
 	simulateBubbleClick: function(state, flActivate) {
-		//var state = this.view.auxSelectState(state);
+		var bubble = this.view.auxSelectState(state);
 
-		//this.view.clickState(state.datum());
+		this.view.clickBubble(bubble.datum());
 	},
 
 	chartClicked: function() {

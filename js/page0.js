@@ -116,7 +116,7 @@ var page0Ctrl = {
 
 	bubbleClicked: function(state, flShow) {
 		this.mapCtrl.simulateStateClick(state, flShow);
-		this.barchartCtrl.simulateBarClick();
+		this.barchartCtrl.simulateBarClick(state, flShow);
 	},
 
 	bubbleAllDeactivated: function() {
