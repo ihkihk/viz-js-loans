@@ -1,3 +1,5 @@
+"use strict;"
+
 function View() {
 	// The View's canvas
 	this.canvas = {

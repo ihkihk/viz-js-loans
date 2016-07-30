@@ -1,3 +1,5 @@
+"use strict;"
+
 var chartStatesView = new View();
 
 chartStatesView.gui = {

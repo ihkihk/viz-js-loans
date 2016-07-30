@@ -289,13 +289,13 @@ var chart_scatterCtrl = {
 	},
 
 	chartClicked: function() {
-		//this.view.resetZoom();
+		this.view.deactivateBubbles();
 
-		//this.parentCtrl.mapAllDeactivated();
+		this.parentCtrl.bubbleAllDeactivated();
 	},
 
 	simulateChartClick: function() {
-		//this.view.resetZoom();
+		this.view.deactivateBubbles();
 	}
 
 };

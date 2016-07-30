@@ -1,3 +1,5 @@
+"use strict;"
+
 var storyView = new View();
 
 storyView.butId = ['viz-story-button-1', 'viz-story-button-2', 'viz-story-button-3'];

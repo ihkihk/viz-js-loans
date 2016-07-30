@@ -1,3 +1,5 @@
+"use strict;"
+
 var page0View = new View();
 
 page0View.gui = {
