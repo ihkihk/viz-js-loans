@@ -3,8 +3,8 @@
 var mapStatesView = new View();
 
 mapStatesView.gui = {
-	map: {
-		body: { d3c: null, BBox: {x:null, y:null, w:null, h:null} },
+	chart: {
+		map: { d3c: null, BBox: {x:null, y:null, w:null, h:null} },
 		path: null,
 		zoom: null
 	}
@@ -19,7 +19,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
     this.show(flShow);
 
 	function drawChart() {
-        var map = this.gui.map.body;
+        var map = this.gui.chart.map;
 
         map.BBox = {x: 0, y: 0, w: this.cView.iw, h: this.cView.ih};
 
@@ -28,11 +28,11 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
             attr('transform', 'translate(' + map.BBox.x + ', ' + map.BBox.y + ')');
 
 		// Create a map zoomer
-		this.gui.map.zoom = d3.zoom().scaleExtent([1,16]).on('zoom', zoomed);
+		this.gui.chart.zoom = d3.zoom().scaleExtent([1,16]).on('zoom', zoomed);
 
         // And call it continuously on the map canvas
         // TODO: Is stopPropagation needed? It is at least for the barchart.
-		map.d3c.call(this.gui.map.zoom).on('click', stopPropagation, true);
+		map.d3c.call(this.gui.chart.zoom).on('click', stopPropagation, true);
 
 		function stopPropagation() {
 			if (d3.event.defaultPrevented) d3.event.stopPropagation();
@@ -40,7 +40,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
         // Create the map path generator, based on Albers projection
         var proj = d3.geoAlbersUsa().scale(1).translate([0, 0]);
-		this.gui.map.path = d3.geoPath().projection(proj);
+		this.gui.chart.path = d3.geoPath().projection(proj);
 
 		// Create the map's clip-path that coincides with the map's extents
 		map.d3c.
@@ -49,7 +49,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			attr('x', 0).attr('y', 0).attr('height', map.BBox.h).attr('width', map.BBox.w);
 
 		// Create a scale for quantizing the continuous data into a pallette of choropleth colors
-        map.scale = d3.scaleQuantize()
+        var scale = d3.scaleQuantize()
             .domain([d3.min(model.tblStatesIncome, function(d) { return d['Per capita income'];}),
 			         d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
@@ -64,7 +64,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
         // ## >>> Then update the unity projection with computed scale and translation
 
         // Below for brevity: b=bounds, s=scale, t=translation
-        var b = this.gui.map.path.bounds(json),
+        var b = this.gui.chart.path.bounds(json),
             dx = b[1][0] - b[0][0], dy = b[1][1] - b[0][1],
             s = 0.95 / Math.max(dx / map.BBox.w, dy / map.BBox.h),
             t = [(map.BBox.w - s * (b[1][0] + b[0][0])) / 2,
@@ -92,24 +92,19 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
         carto.selectAll('path').
             data(json.features).
             enter().
+			datum(function(d) { d.properties.active = false; return d;}).
             append('path').
             attr('class', function(d) {
                 // This is the class determining the quantized color
-				return map.scale(model.mapStateIncome.get(d.properties.name));
+				return scale(model.mapStateIncome.get(d.properties.name));
 			}).
 			classed('state', true).
             attr('id', function(d) {
                 return 'id-map-state-' + model.mapStateName2Acro.get(d.properties.name);
             }).
-            attr('d', this.gui.map.path).
-			on('mouseenter', function(d) {
-                var stateAcro = model.mapStateName2Acro.get(d.properties.name);
-				this.ctrl.mapHovered(stateAcro, true);
-			}.bind(this)).
-            on('mouseout', function(d) {
-                var stateAcro = model.mapStateName2Acro.get(d.properties.name);
-                this.ctrl.mapHovered(stateAcro, false);
-            }.bind(this)).
+            attr('d', this.gui.chart.path).
+			on('mouseenter', function(d) { this.ctrl.mapHovered(d, true); }.bind(this)).
+            on('mouseout', function(d) { this.ctrl.mapHovered(d, false); }.bind(this)).
 			on('click', function(d) { this.ctrl.stateClicked(d); }.bind(this));
 
 
@@ -133,40 +128,39 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
 
 mapStatesView.clickState = function(d) {
-    // Detect the case when the state has never been activated before, so
-    // that we can add the "active" attribute.
-	if (d.properties.active == undefined) {
-		d.properties.active = false;
-	}
-
 	// Reset the map (usually means resetting the zoom, deactivating any
     // activated state and removing annotations).
+	if (d.properties.active) {
+		this.resetMap();
+		return;
+	}
+
 	this.resetMap();
 
 	// Toggle the active state of the currently clicked state
 	d.properties.active = !d.properties.active;
 
 	// Toggle the active/inactive hilite of the state
-	this.toggleStateHilite(d, d.properties.active);
+	this.hiliteState(d, d.properties.active);
 
 	// Center the map on the newly activated state, if any
 	if (d.properties.active) {
-		var bounds = this.gui.map.path.bounds(d),
+		var bounds = this.gui.chart.path.bounds(d),
                 dx = bounds[1][0] - bounds[0][0],
                 dy = bounds[1][1] - bounds[0][1],
                 x = (bounds[0][0] + bounds[1][0]) / 2,
                 y = (bounds[0][1] + bounds[1][1]) / 2,
-				bbox = this.gui.map.body.BBox,
+				bbox = this.gui.chart.map.BBox,
                 scale = Math.max(1, Math.min(16,
 				                             0.9 / Math.max(dx / bbox.w,
 				                                            dy / bbox.h))),
                 translate = [bbox.w / 2 -  x * scale, bbox.h / 2 -  y * scale];
 
-		var transform = d3.zoomTransform(this.gui.map.body.d3c).
+		var transform = d3.zoomTransform(this.gui.chart.map.d3c).
 			translate(translate[0], translate[1]).scale(scale);
 
-		this.gui.map.body.d3c.transition().duration(750).
-			call(this.gui.map.zoom.transform, transform);
+		this.gui.chart.map.d3c.transition().duration(750).
+			call(this.gui.chart.zoom.transform, transform);
 
 		// Place an annotation
 		this.addDetails(d);
@@ -180,33 +174,34 @@ mapStatesView.getStateStatus = function(d) {
 
 mapStatesView.resetMap = function() {
 	// Remove all map annotations
-	this.gui.map.body.d3c.select('.map-annotation').remove();
+	this.gui.chart.map.d3c.select('.map-annotation').remove();
 
 	// Deselect any selected state
-	var active = this.gui.map.body.d3c.select('.active');
-	if (active.node() != null) {
-		this.toggleStateHilite(active.datum(), flActivate=false);
-		this.ctrl.notifyOtherCtrlStateClicked(active.datum(), false);
+	var state = this.gui.chart.map.d3c.select('.active');
+	if (state.node() != null) {
+		var d = state.datum();
+		d.properties.active = false;
+		this.hiliteState(d);
 	}
 
 	// Zoom out to scale 1
-	this.gui.map.body.d3c.transition().duration(750).
-		call(this.gui.map.zoom.transform, d3.zoomIdentity);
+	this.gui.chart.map.d3c.transition().duration(750).
+		call(this.gui.chart.zoom.transform, d3.zoomIdentity);
 }; // end function mapStatesView.resetMap(...)
 
-mapStatesView.toggleStateHilite = function(d, flActivate) {
-	var state = this.auxSelectState(d);
+mapStatesView.hiliteState = function(d) {
+	var state = this.getState(d);
 
-	state.classed('active', flActivate);
+	state.classed('active', d.properties.active);
 };
 
 mapStatesView.addDetails = function(d) {
 	// Create the annotation canvas
-	var ann = this.gui.map.body.d3c.append('g').attr('class', 'map-annotation annotation').
+	var ann = this.gui.chart.map.d3c.append('g').attr('class', 'map-annotation annotation').
 		style('opacity', 0);
 
-	var cx = this.gui.map.body.BBox.w / 2,
-		cy = this.gui.map.body.BBox.h / 2;
+	var cx = this.gui.chart.map.BBox.w / 2,
+		cy = this.gui.chart.map.BBox.h / 2;
 
 	// Add bubble
 	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
@@ -222,28 +217,21 @@ mapStatesView.addDetails = function(d) {
 	ann.transition().delay(750).duration(500).style('opacity', 1);
 };
 
-mapStatesView.auxSelectState = function(p) {
-	var filter = null;
-
-	if (p instanceof String || typeof(p) === "string") {
-		// The state is specified by name, e.g. "CA"
-
-		// If name is acro, first expand it
-		if (p.length == 2) p = model.mapStateName2Full.get(p);
-
-		filter = function(d) { return d.properties.name == p; };
-	} else {
-		// The state is specified e.g. via its datum Object
-		filter = function(d) { return d.properties.name == p.properties.name; }
-	}
-
-	return this.gui.map.body.d3c.selectAll('.state').filter(filter);
-};
-
-mapStatesView.simulateMapHover = function(state, flShow) {
-    var state = this.gui.map.body.d3c.select('#' + 'id-map-state-' + state);
+mapStatesView.hoverMap = function(d, flShow) {
+    var state = this.getState(d);
 
     state.classed('hovered', flShow);
+};
+
+mapStatesView.getState = function(p) {
+	if (p instanceof String || typeof(p) === "string") {
+		// The state is specified by name, e.g. "CA"
+		return this.gui.chart.map.d3c.select('#' + 'id-map-state-' + p);
+	} else {
+		// The state is specified e.g. via its datum Object
+		var state = model.mapStateName2Acro.get(p.properties.name);
+		return this.gui.chart.map.d3c.select('#' + 'id-map-state-' + state);
+	}
 };
 
 
@@ -259,40 +247,45 @@ var chart_mapStatesCtrl = {
 		this.view.create(d3c, this, flShow);
 	},
 
-    mapHovered: function(state, flShow) {
-        // Push up this event to the parent controller so that other views can respond
-        this.parentCtrl.mapHovered(state, flShow);
+    mapHovered: function(d, flShow, callParent=true) {
+		this.view.hoverMap(d, flShow);
+
+		if (callParent) {
+        	// Push up this event to the parent controller so that other views can respond
+			var state = model.mapStateName2Acro.get(d.properties.name);
+        	this.parentCtrl.mapHovered(state, flShow);
+		}
     },
 
-    simulateMapHover: function(state, flShow) {
-        this.view.simulateMapHover(state, flShow);
-    },
-
-    stateClicked: function(d) {
+    stateClicked: function(d, callParent=true) {
 		this.view.clickState(d);
 		var flActive = this.view.getStateStatus(d);
 
-		this.notifyOtherCtrlStateClicked(d, flActive);
+		if (callParent) {
+			var state = model.mapStateName2Acro.get(d.properties.name);
+			this.parentCtrl.mapStateClicked(state, flActive);
+		}
     },
 
-	notifyOtherCtrlStateClicked: function(d, flActive) {
-		this.parentCtrl.mapStateClicked(model.mapStateName2Acro.get(d.properties.name), flActive);
-	},
-
-	simulateStateClick: function(state, flActivate) {
-		var state = this.view.auxSelectState(state);
-
-		this.view.clickState(state.datum());
-	},
-
-	mapClicked: function() {
+	mapClicked: function(callParent=true) {
 		this.view.resetMap();
 
-		this.parentCtrl.mapAllDeactivated();
+		if (callParent)
+			this.parentCtrl.mapAllDeactivated();
+	},
+
+	simulateMapHover: function(state, flShow) {
+		var s = this.view.getState(state);
+        this.mapHovered(s.datum(), flShow, callParent=false);
+    },
+
+	simulateStateClick: function(state, flActivate) {
+		var s = this.view.getState(state);
+		this.stateClicked(s.datum(), callParent=false);
 	},
 
 	simulateMapClick: function() {
-		this.view.resetMap();
+		this.mapClicked(callParent=false);
 	}
 
 };

@@ -102,11 +102,11 @@ var page0Ctrl = {
 	},
 
 	mapAllDeactivated: function() {
-		this.barchartCtrl.simulateBodyClick();
+		this.barchartCtrl.simulatePlotClick();
 		this.scatterCtrl.simulateChartClick();
 	},
 
-	barStateClicked: function(state, flShow) {
+	barClicked: function(state, flShow) {
 		this.mapCtrl.simulateStateClick(state, flShow);
 		this.scatterCtrl.simulateBubbleClick(state, flShow);
 	},

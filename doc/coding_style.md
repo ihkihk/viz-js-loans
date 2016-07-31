@@ -7,6 +7,7 @@ _Last update: 16-Jul-2016_
 
 * Btn - button
 * Ctrl - controller
+* `d` - d3 element's datum
 * `geom` object properties:  
    oX, oY - offsetX/Y,  
    iw, ih - internal width/height,  
