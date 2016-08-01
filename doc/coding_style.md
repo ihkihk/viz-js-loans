@@ -1,5 +1,5 @@
 _Author: (c) Ivailo Kassamakov 2016_  
-_Last update: 16-Jul-2016_
+_Last update: 30-Jul-2016_
 
 # Coding style guidelines
 

@@ -203,12 +203,7 @@ chartStatesView.sort = function(sort) {
 	transition.select('.y-axis').call(y.gen).selectAll('g').delay(delay);
 }; // end function chartStatesView.sort(...)
 
-chartStatesView.showDetails = function(datum) {
-	// Select the bar containing datum
-	var bar = this.cView.d3c.selectAll('.bar').filter(function(d) {
-		return d.State == datum.State;
-	});
-
+chartStatesView.showDetails = function(d) {
 	// Delete any previous annotation
 	this.hideDetails();
 
@@ -219,8 +214,8 @@ chartStatesView.showDetails = function(datum) {
 	var y = this.gui.chart.yAxis.scale;
 	var x = this.gui.chart.xAxis.scale;
 
-	y_coord = y(datum.State);
-	x_coord = x(datum['Per capita income']);
+	y_coord = y(d.State);
+	x_coord = x(d['Per capita income']);
 
 	// Draw the annotation line
 	var ann = d3c.append('g').attr('class', 'bar-annotation annotation');
@@ -234,9 +229,9 @@ chartStatesView.showDetails = function(datum) {
 		attr('rx', 3).attr('ry', 3);
 
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
-		text('State:  ' + datum.State)
+		text('State:  ' + d.State)
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
-		text('Income: ' + datum['Per capita income']);
+		text('Income: ' + d['Per capita income']);
 
 	bubble.transition().duration(500).style('opacity', 1);
 }; // end function chartStatesView.showDetails(...)
@@ -357,10 +352,11 @@ var chart_barStatesCtrl = {
 
 	barClicked: function(d, callParent=true) {
 		this.view.clickBar(d);
-		var flActive = this.view.getBarStatus(d);
 
-		if (callParent)
+		if (callParent) {
+			var flActive = this.view.getBarStatus(d);
 			this.parentCtrl.barClicked(d.State, flActive);
+		}
 	},
 
 	plotClicked: function(callParent=true) {
@@ -381,7 +377,6 @@ var chart_barStatesCtrl = {
 	},
 
 	simulateBarClick: function(state, flShow) {
-		debugger;
 		// Something has been clicked in another view - respond here too
 		var bar = this.view.getBar(state);
 		this.barClicked(bar.datum(), callParent=false);

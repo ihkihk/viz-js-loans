@@ -247,6 +247,8 @@ var chart_mapStatesCtrl = {
 		this.view.create(d3c, this, flShow);
 	},
 
+	// # >>> Events from user's GUI actions
+	
     mapHovered: function(d, flShow, callParent=true) {
 		this.view.hoverMap(d, flShow);
 
@@ -259,9 +261,9 @@ var chart_mapStatesCtrl = {
 
     stateClicked: function(d, callParent=true) {
 		this.view.clickState(d);
-		var flActive = this.view.getStateStatus(d);
 
 		if (callParent) {
+			var flActive = this.view.getStateStatus(d);
 			var state = model.mapStateName2Acro.get(d.properties.name);
 			this.parentCtrl.mapStateClicked(state, flActive);
 		}
@@ -270,9 +272,14 @@ var chart_mapStatesCtrl = {
 	mapClicked: function(callParent=true) {
 		this.view.resetMap();
 
-		if (callParent)
+		if (callParent) {
 			this.parentCtrl.mapAllDeactivated();
+		}
 	},
+
+	// # <<< Events from user's GUI actions
+
+	// # >>> Messages coming from the parent controller
 
 	simulateMapHover: function(state, flShow) {
 		var s = this.view.getState(state);
@@ -288,6 +295,7 @@ var chart_mapStatesCtrl = {
 		this.mapClicked(callParent=false);
 	}
 
+	// # <<< Messages coming from the parent controller
 };
 
 /* EOF */

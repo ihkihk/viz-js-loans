@@ -103,7 +103,7 @@ var page0Ctrl = {
 
 	mapAllDeactivated: function() {
 		this.barchartCtrl.simulatePlotClick();
-		this.scatterCtrl.simulateChartClick();
+		this.scatterCtrl.simulatePlotClick();
 	},
 
 	barClicked: function(state, flShow) {
@@ -113,7 +113,7 @@ var page0Ctrl = {
 
 	barAllDeactivated: function() {
 		this.mapCtrl.simulateMapClick();
-		this.scatterCtrl.simulateChartClick();
+		this.scatterCtrl.simulatePlotClick();
 	},
 
 	bubbleClicked: function(state, flShow) {
@@ -121,8 +121,8 @@ var page0Ctrl = {
 		this.barchartCtrl.simulateBarClick(state, flShow);
 	},
 
-	bubbleAllDeactivated: function() {
+	scatterAllDeactivated: function() {
 		this.mapCtrl.simulateMapClick();
-		this.barchartCtrl.simulateBodyClick();
+		this.barchartCtrl.simulatePlotClick();
 	},
 };
