@@ -6,18 +6,24 @@ var model = {
     mapStateName2Full: d3.map(),
 	mapStateName2Acro: d3.map(),
     tblStatesIncome: null,
+    tblProsperLoans: null,
 	tblLoanIncome: [],
     flDataLoaded: false,
 
     loadStatesTable: function(dataArray) {
-        console.log("model.loadStatesTable called!")
         this.topojsonUs = dataArray[0];
         this.tblStatesIncome = dataArray[1];
+		this.tblProsperLoans = dataArray[2];
+		debugger;
         this.flDataLoaded = true;
+		
+		/* Calculating average loan per state:
+		d3.nest().key(function(d) {return d.BorrowerState;}).rollup(function(leaves) {return d3.sum(leaves, function(d) {return +d.LoanOriginalAmount;}) / leaves.length;}).entries(this.tblProsperLoans)
+		*/
     },
 
     isDataLoaded: function() {
-        return this.flDataLoaded != false;
+        return this.flDataLoaded;
     },
 
     processIncomeData: function(d) {
