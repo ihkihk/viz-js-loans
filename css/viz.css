@@ -209,4 +209,18 @@
     fill: orange;
     opacity: 1;
 }
+
+.legend text {
+	font: 10px sans-serif;
+}
+
+.bkgrnd-legend {
+	fill: floralwhite;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.legend .title {
+	font-weight: bold;
+}
 /* EOF */
