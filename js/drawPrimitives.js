@@ -60,6 +60,7 @@ function drawTextButton(parent, x, y, w, h, txt, cls, id, callback, rx=30, ry=30
 //        the original "text" element.
 ////////////////////////////////////////////////////////////////////////////////
 function textWrap(text, width) {
+	debugger;
 	text.each(function() {
 		var text = d3.select(this),
 			words = text.text().split(/\s+/).reverse(),

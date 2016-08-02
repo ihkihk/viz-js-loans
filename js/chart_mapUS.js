@@ -54,7 +54,6 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			         d3.max(model.tblStatesIncome, function(d) { return d['Per capita income'];})])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
-
         // # >>> Find the bounds of the map and scale appropriately the projection
         // so that the map fills initially the whole viewport
 
@@ -72,8 +71,8 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 
         proj.scale(s).translate(t);
 
-        // ## <<<
-        // # <<<
+        // ## <<< Then update the unity projection with computed scale and translation
+        // # <<< Find the bounds of the map and scale appropriately the projection...
 
 		// Create a rectangle that serves both as the map border and
         // as transparent background. Clicking the latter resets the zoom.
@@ -107,7 +106,41 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
             on('mouseout', function(d) { this.ctrl.mapHovered(d, false); }.bind(this)).
 			on('click', function(d) { this.ctrl.stateClicked(d); }.bind(this));
 
-
+		// # >>> Draw the legend
+		
+		// Legend canvas
+		var legend = map.d3c.append('g').attr('class', 'legend legend-map').
+			attr('transform', 'translate(10, 10)').style('pointer-events', 'none');
+		
+		// Legend background
+		legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 63).attr('height', 125).
+			attr('class', 'bkgrnd-legend');
+			
+		// Legend title
+		legend.append('g').attr('transform', 'translate(0, 0)').
+			append('text').attr('class', 'title').
+			attr('x', 30).attr('y', 13).attr('dy', 0.8).
+			style('alignment-baseline', 'middle').style('text-anchor', 'middle').
+			text('Per-capita income [$]').call(textWrap, 60);
+			
+		// Legend bubble + text
+		var legendItems = legend.append('g').attr('transform', 'translate(3, 30)').
+			selectAll('rect').
+			data(scale.range()).
+			enter().
+			append('g').attr('transform', function(d, i) { return 'translate(0, ' + (i * 10) + ')'; });
+			
+		legendItems.append('rect').attr('x', 0).attr('y', 0).
+			attr('width', 10).attr('height', 10).attr('class', function(d) { return d; });
+		
+		legendItems.append('text').attr('x', 12).attr('y', 5).style('alignment-baseline', 'middle').
+			text(function(d, i) {
+				var t = Math.round(+scale.invertExtent(d)[1]);
+				return 'to ' + d3.format(",.2r")(t);
+			});
+			
+		// # <<< Draw the legend
+		
 		function zoomed() {
 			carto.style("stroke-width", 1.5 / d3.event.transform.k + "px").
 				attr("transform", d3.event.transform);
