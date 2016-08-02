@@ -83,15 +83,6 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 			on('click', function(d) {
 				this.ctrl.barClicked(d); }.bind(this));
 
-		// This is really needed (I don't understand why), but without it
-		// the bars get activated on click and then immediately lose
-		// their active status
-		plot.d3c.on('click', stopPropagation, true);
-
-		function stopPropagation() {
-			if (d3.event.defaultPrevented) d3.event.stopPropagation();
-		}
-
 		// Put axis titles
 		xAxis.d3c.append('text').
 			attr('transform', 'translate(' + [xAxis.BBox.w/2, xAxis.BBox.h/2-15] + ')').

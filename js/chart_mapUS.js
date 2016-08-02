@@ -30,13 +30,13 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 		// Create a map zoomer
 		this.gui.chart.zoom = d3.zoom().scaleExtent([1,16]).on('zoom', zoomed);
 
-        // And call it continuously on the map canvas
-        // TODO: Is stopPropagation needed? It is at least for the barchart.
-		map.d3c.call(this.gui.chart.zoom).on('click', stopPropagation, true);
-
-		function stopPropagation() {
+        // Call the map zoomer continuously on the map canvas.
+        // If the drag behavior prevents the default click,
+		// also stop propagation so we don't click-to-zoom.
+		// Note: the click handler is set on the capturing phase!
+		map.d3c.call(this.gui.chart.zoom).on('click', function() {
 			if (d3.event.defaultPrevented) d3.event.stopPropagation();
-		}
+		}, true);
 
         // Create the map path generator, based on Albers projection
         var proj = d3.geoAlbersUsa().scale(1).translate([0, 0]);
