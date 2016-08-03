@@ -7,26 +7,34 @@ var model = {
 	mapStateName2Acro: d3.map(),
     tblStatesIncome: null,
     tblProsperLoans: null,
-	tblLoanIncome: [],
+	tblLoanIncome: [], // FIXME: Remove this shim data
+    tblLoanState: null,
     flDataLoaded: false,
 
-    loadStatesTable: function(dataArray) {
+    loadDataTables: function(dataArray) {
         this.topojsonUs = dataArray[0];
         this.tblStatesIncome = dataArray[1];
 		this.tblProsperLoans = dataArray[2];
-		debugger;
         this.flDataLoaded = true;
-		
-		/* Calculating average loan per state:
-		d3.nest().key(function(d) {return d.BorrowerState;}).rollup(function(leaves) {return d3.sum(leaves, function(d) {return +d.LoanOriginalAmount;}) / leaves.length;}).entries(this.tblProsperLoans)
-		*/
+
+		// Calculating average loan per state:
+		tblLoanState = d3.nest().
+            // Aggregate by state
+            key(function(d) { return d.BorrowerState; }).
+            // Find the average loan original amount by state
+            rollup(function(leaves) {
+                return d3.sum(leaves, function(d) {
+                    return +d.LoanOriginalAmount;
+                }) / leaves.length;}).
+            entries(this.tblProsperLoans);
+
     },
 
     isDataLoaded: function() {
         return this.flDataLoaded;
     },
 
-    processIncomeData: function(d) {
+    processIncomeDataRow: function(d) {
         var r = {};
 
         // Convert numeric string to number
@@ -39,14 +47,22 @@ var model = {
         this.mapStateIncome.set(r['StateFull'], r['Per capita income']);
         this.mapStateName2Full.set(r['State'], r['StateFull']);
         this.mapStateName2Acro.set(r['StateFull'], r['State']);
-		
+
+        // FIXME: Remove this shim
 		this.tblLoanIncome.push({
 			name: r.State,
 			income: r['Per capita income'],
 			loan: r['Per capita income'] + Math.random()*100,
 		});
-				
+
 		return r;
+    },
+
+    processProsperDataRow: function(d) {
+        var r = {};
+
+        r = d;
+        r.LoanOriginalAmount = +d.LoanOriginalAmount;
     }
 };
 
