@@ -1,3 +1,7 @@
+"use strict";
+
+/* global View */
+
 var page2View = new View();
 
 page2View.create = function(canvas, ctrl, flShow=false)
@@ -27,3 +31,5 @@ var page2Ctrl = {
 		View.prototype.show.call(this.view, flShow);
 	}
 };
+
+/* EOF */

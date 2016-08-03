@@ -1,5 +1,7 @@
 "use strict";
 
+/* global d3 */
+
 var model = {
     topojsonUs: null,
     mapStateIncome: d3.map(),
@@ -10,7 +12,7 @@ var model = {
     flDataLoaded: false,
 
     loadStatesTable: function(dataArray) {
-        console.log("model.loadStatesTable called!")
+        console.log("model.loadStatesTable called!");
         this.topojsonUs = dataArray[0];
         this.tblStatesIncome = dataArray[1];
         this.flDataLoaded = true;

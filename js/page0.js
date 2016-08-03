@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global View, dbgRect, chart_barStatesCtrl, chart_mapStatesCtrl, chart_scatterCtrl */
 
 var page0View = new View();
 
@@ -18,7 +20,8 @@ page0View.gui = {
 		size: {w: null, h:null},
 		d3c: null
 	}
-}
+};
+
 page0View.create = function(canvas, ctrl, flShow=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'page');
@@ -126,3 +129,5 @@ var page0Ctrl = {
 		this.barchartCtrl.simulatePlotClick();
 	},
 };
+
+/* EOF */
