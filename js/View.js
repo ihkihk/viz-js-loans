@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global d3, getElementPropertyPx */
 
 function View() {
 	// The View's canvas
@@ -15,19 +17,19 @@ function View() {
 		iw: null, ih: null,
 		bt: null,
 		bw: null, bh: null,
-		w: null, w: null,
+		w: null, h: null,
 		m: {t: 2, b: 2, l: 2, r: 2},
 		p: {t: 5, b: 5, l: 5, r: 5},
 		d3c_outer: null,
 		d3c: null
-	};;
+	};
 
 	// The View's GUI
 	this.gui = null;
 
 	// Controller of the view
 	this.ctrl = null;
-};
+}
 
 	// Function for creating the view
 View.prototype.create = function(canvas, ctrl, name) {
@@ -86,3 +88,5 @@ View.prototype.show = function(flShow, flAnim=true)
 		this.canvas.d3c.transition().duration(animDuration).style('opacity', state).on('end', function() { d3.select(this).style('display', dspl); });
 	}
 };
+
+/* EOF */

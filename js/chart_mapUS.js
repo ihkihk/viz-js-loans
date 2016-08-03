@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global d3, topojson, View, dbgRect, textWrap, model */
 
 var mapStatesView = new View();
 
@@ -144,7 +146,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 		function zoomed() {
 			carto.style("stroke-width", 1.5 / d3.event.transform.k + "px").
 				attr("transform", d3.event.transform);
-		};
+		}
     } // end function drawChart(...)
 
     // Wait for data to be loaded
@@ -154,7 +156,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			return;
         }
         drawChart.call(that);
-    };
+    }
 
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function mapStatesView.create(...)
@@ -197,7 +199,7 @@ mapStatesView.clickState = function(d) {
 
 		// Place an annotation
 		this.addDetails(d);
-	};
+	}
 };
 
 mapStatesView.getStateStatus = function(d) {
@@ -237,7 +239,7 @@ mapStatesView.addDetails = function(d) {
 		cy = this.gui.chart.map.BBox.h / 2 - 30;
 
 	// Add bubble
-	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
+	ann.append('rect').attr('x', cx-50).attr('y', cy-15).
 		attr('width', 100).attr('height', 30).
 		attr('rx', 3).attr('ry', 3);
 
@@ -318,16 +320,16 @@ var chart_mapStatesCtrl = {
 
 	simulateMapHover: function(state, flShow) {
 		var s = this.view.getState(state);
-        this.mapHovered(s.datum(), flShow, callParent=false);
+        this.mapHovered(s.datum(), flShow, false);
     },
 
 	simulateStateClick: function(state, flActivate) {
 		var s = this.view.getState(state);
-		this.stateClicked(s.datum(), callParent=false);
+		this.stateClicked(s.datum(), false);
 	},
 
 	simulateMapClick: function() {
-		this.mapClicked(callParent=false);
+		this.mapClicked(false);
 	}
 
 	// # <<< Messages coming from the parent controller

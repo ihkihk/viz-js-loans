@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global d3, View, dbgRect, page0Ctrl, page1Ctrl, page2Ctrl, drawTextButton */
 
 var storyView = new View();
 
@@ -46,7 +48,7 @@ storyView.cView = {
 	iw: null, ih: null,
 	bt: null,
 	bw: null, bh: null,
-	w: null, w: null,
+	w: null, h: null,
 	m: {t: 10, b: 10, l: 10, r: 10},
 	p: {t: 5, b: 5, l: 5, r: 5},
 	d3c_outer: null,
@@ -170,9 +172,9 @@ storyView.createPages = function() {
 	this.gui.pageViewCanvas[2].d3c = this.cView.d3c.append('g').
 		attr('transform', 'translate('+this.gui.pageViewCanvas[2].o.x+','+this.gui.pageViewCanvas[2].o.y+')');
 
-	this.ctrl.pageCtrl[0].createView(this.gui.pageViewCanvas[0], this.ctrl, flShow=false);
-	this.ctrl.pageCtrl[1].createView(this.gui.pageViewCanvas[1], this.ctrl, flShow=false);
-	this.ctrl.pageCtrl[2].createView(this.gui.pageViewCanvas[2], this.ctrl, flShow=false);
+	this.ctrl.pageCtrl[0].createView(this.gui.pageViewCanvas[0], this.ctrl, false);
+	this.ctrl.pageCtrl[1].createView(this.gui.pageViewCanvas[1], this.ctrl, false);
+	this.ctrl.pageCtrl[2].createView(this.gui.pageViewCanvas[2], this.ctrl, false);
 
 	this.ctrl.configPages();
 };
@@ -204,3 +206,6 @@ var storyCtrl = {
 		this.view.create(canvas, this);
 	}
 };
+
+/* EOF */
+

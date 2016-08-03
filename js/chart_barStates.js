@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global d3, View, dbgRect, model */
 
 var chartStatesView = new View();
 
@@ -140,7 +142,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 
 		// Show details by default
 		this.ctrl.iconDetailsClicked();
-	};
+	}
 
     // Wait for data to be loaded
     function waitfor(that, obj, checkfunc, callback) {
@@ -149,7 +151,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 			return;
         }
         drawChart.call(that);
-    };
+    }
 
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function chartStatesView.create(...)
@@ -163,20 +165,18 @@ chartStatesView.showSortIcon = function(name) {
 
 chartStatesView.sort = function(sort) {
 	var y = this.gui.chart.yAxis,
-		d3c = this.cView.d3c,
-		plot_d3c = this.gui.chart.plot.d3c,
-		yAxis_d3c = this.gui.chart.yAxis.d3c;
+		d3c = this.cView.d3c;
 
 	var sorter = null;
 	switch(sort) {
 		case 'asc':
-			sorter = function(a, b) { return a['Per capita income'] - b['Per capita income']; }
+			sorter = function(a, b) { return a['Per capita income'] - b['Per capita income']; };
 			break;
 		case 'desc':
-			sorter = function(a, b) { return b['Per capita income'] - a['Per capita income']; }
+			sorter = function(a, b) { return b['Per capita income'] - a['Per capita income']; };
 			break;
 		case 'alpha':
-			sorter = function(a, b) { return d3.ascending(a.State, b.State); }
+			sorter = function(a, b) { return d3.ascending(a.State, b.State); };
 			break;
 		default:
 			throw('Invalid sort');
@@ -205,8 +205,8 @@ chartStatesView.showDetails = function(d) {
 	var y = this.gui.chart.yAxis.scale;
 	var x = this.gui.chart.xAxis.scale;
 
-	y_coord = y(d.State);
-	x_coord = x(d['Per capita income']);
+	var y_coord = y(d.State);
+	var x_coord = x(d['Per capita income']);
 
 	// Draw the annotation line
 	var ann = d3c.append('g').attr('class', 'bar-annotation annotation');
@@ -220,7 +220,7 @@ chartStatesView.showDetails = function(d) {
 		attr('rx', 3).attr('ry', 3);
 
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
-		text('State:  ' + d.State)
+		text('State:  ' + d.State);
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
 		text('Income: ' + d3.format(",d")(d['Per capita income']));
 
@@ -364,17 +364,17 @@ var chart_barStatesCtrl = {
 	simulateBarHover: function(state, flShow) {
 		// Something has been hilited in another view - respond here too
 		var bar = this.view.getBar(state);
-		this.barHovered(bar.datum(), flShow, callParent=false);
+		this.barHovered(bar.datum(), flShow, false);
 	},
 
 	simulateBarClick: function(state, flShow) {
 		// Something has been clicked in another view - respond here too
 		var bar = this.view.getBar(state);
-		this.barClicked(bar.datum(), callParent=false);
+		this.barClicked(bar.datum(), false);
 	},
 
 	simulatePlotClick: function() {
-		this.plotClicked(callParent=false);
+		this.plotClicked(false);
 	}
 
 	// # <<< Messages coming from the parent controller

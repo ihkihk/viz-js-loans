@@ -10,6 +10,8 @@
 
 "use strict";
 
+/* global d3 */
+
 ////////////////////////////////////////////////////////////////////////////////
 // Draw SVG clickable button with a centered & wrapped text inside.
 //

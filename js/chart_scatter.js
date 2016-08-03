@@ -1,4 +1,6 @@
-"use strict;"
+"use strict";
+
+/* global d3, View, dbgRect, model */
 
 var scatterView = new View();
 
@@ -44,7 +46,9 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 		xAxis.d3c.call(xAxis.gen);
 
 		// Y-axis
-		yAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + (yAxis.BBox.x + yAxis.BBox.w) + ',' + yAxis.BBox.y + ')').attr('class', 'axis y-axis cont-axis');
+		yAxis.d3c = this.cView.d3c.append('g').
+			attr('transform', 'translate(' + [yAxis.BBox.x + yAxis.BBox.w, yAxis.BBox.y] + ')').
+			attr('class', 'axis y-axis cont-axis');
 		yAxis.scale = d3.scaleLinear()
             .domain([d3.min(model.tblLoanState, function(d) { return d.value;}),
 			         d3.max(model.tblLoanState, function(d) { return d.value;})])
@@ -132,7 +136,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 			return;
         }
         drawChart.call(that);
-    };
+    }
 
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function mapStatesView.create(...)
@@ -177,8 +181,8 @@ scatterView.showDetails = function(d) {
 	var y = this.gui.chart.yAxis.scale;
 	var x = this.gui.chart.xAxis.scale;
 
-	y_coord = y(d.value);
-	x_coord = x(model.mapStateIncome.get(d.key));
+	var y_coord = y(d.value);
+	var x_coord = x(model.mapStateIncome.get(d.key));
 
 	// Draw the annotation lines
 	var ann = d3c.append('g').attr('class', 'scatter-annotation annotation');
@@ -226,7 +230,7 @@ scatterView.getState = function(p) {
 };
 
 scatterView.hoverBubble = function(d, flShow) {
-	var bubble = this.getState(d)
+	var bubble = this.getState(d);
 
 	bubble.classed('hovered', flShow);
 
@@ -293,17 +297,17 @@ var chart_scatterCtrl = {
 	simulateBubbleHover: function(state, flShow) {
 		var bubble = this.view.getState(state);
 
-        this.bubbleHovered(bubble.datum(), flShow, callParent=false);
+        this.bubbleHovered(bubble.datum(), flShow, false);
     },
 
 	simulateBubbleClick: function(state, flActivate) {
 		var bubble = this.view.getState(state);
 
-		this.bubbleClicked(bubble.datum(), callParent=false);
+		this.bubbleClicked(bubble.datum(), false);
 	},
 
 	simulatePlotClick: function() {
-		this.plotClicked(callParent=false);
+		this.plotClicked(false);
 	}
 
 	// # <<< Messages coming from the parent controller

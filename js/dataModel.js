@@ -1,5 +1,7 @@
 "use strict";
 
+/* global d3 */
+
 var model = {
     topojsonUs: null,
     mapStateIncome: d3.map(),
