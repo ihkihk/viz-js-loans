@@ -95,7 +95,7 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
             append('path').
             attr('class', function(d) {
                 // This is the class determining the quantized color
-				return scale(model.mapStateIncome.get(d.properties.name));
+				return scale(model.mapStateIncome.get(model.mapStateName2Acro.get(d.properties.name)));
 			}).
 			classed('state', true).
             attr('id', function(d) {
@@ -234,7 +234,7 @@ mapStatesView.addDetails = function(d) {
 		style('opacity', 0);
 
 	var cx = this.gui.chart.map.BBox.w / 2,
-		cy = this.gui.chart.map.BBox.h / 2;
+		cy = this.gui.chart.map.BBox.h / 2 - 30;
 
 	// Add bubble
 	var bubble = ann.append('rect').attr('x', cx-50).attr('y', cy-15).
@@ -245,7 +245,9 @@ mapStatesView.addDetails = function(d) {
 	ann.append('text').attr('x', cx-45).attr('y', cy-5).
 		text('State:  ' + model.mapStateName2Acro.get(d.properties.name));
 	ann.append('text').attr('x', cx-45).attr('y', cy+5).
-		text('Income: ' + "DEADBEEF");
+		text('Income: ' + d3.format(",d")(
+			model.mapStateIncome.get(
+				model.mapStateName2Acro.get(d.properties.name))));
 
 	ann.transition().delay(750).duration(500).style('opacity', 1);
 };

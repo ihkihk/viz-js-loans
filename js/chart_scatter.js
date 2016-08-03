@@ -33,24 +33,24 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 		// The chart can take the whole area of the view
 		chart.plot.BBox = {x: yAxis.BBox.w, y: yAxis.BBox.y, h: yAxis.BBox.h, w: xAxis.BBox.w};
 
-		yAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + (yAxis.BBox.x + yAxis.BBox.w) + ',' + yAxis.BBox.y + ')').attr('class', 'axis y-axis cont-axis');
-		yAxis.scale = d3.scaleLinear()
-            .domain([d3.min(model.tblLoanIncome, function(d) { return d.loan;}),
-			         d3.max(model.tblLoanIncome, function(d) { return d.loan;})])
-            .range([chart.plot.BBox.h-bubbleRadius-2, 0+bubbleRadius+2]);
-		yAxis.gen = d3.axisLeft().scale(yAxis.scale);
-		yAxis.d3c.call(yAxis.gen);
-
 		// X-axis
-
 		xAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + xAxis.BBox.x + ',' + xAxis.BBox.y + ')').attr('class', 'axis x-axis cont-axis');
 		// Create a scale for the continuous x and y data
         xAxis.scale = d3.scaleLinear()
-            .domain([d3.min(model.tblLoanIncome, function(d) { return d.income;}),
-			         d3.max(model.tblLoanIncome, function(d) { return d.income;})])
+            .domain([d3.min(model.mapStateIncome.entries(), function(d) { return d.value;}),
+			         d3.max(model.mapStateIncome.entries(), function(d) { return d.value;})])
             .range([0+bubbleRadius+2, chart.plot.BBox.w-bubbleRadius-2]);
 		xAxis.gen = d3.axisBottom().scale(xAxis.scale);
 		xAxis.d3c.call(xAxis.gen);
+
+		// Y-axis
+		yAxis.d3c = this.cView.d3c.append('g').attr('transform', 'translate(' + (yAxis.BBox.x + yAxis.BBox.w) + ',' + yAxis.BBox.y + ')').attr('class', 'axis y-axis cont-axis');
+		yAxis.scale = d3.scaleLinear()
+            .domain([d3.min(model.tblLoanState, function(d) { return d.value;}),
+			         d3.max(model.tblLoanState, function(d) { return d.value;})])
+            .range([chart.plot.BBox.h-bubbleRadius-2, 0+bubbleRadius+2]);
+		yAxis.gen = d3.axisLeft().scale(yAxis.scale);
+		yAxis.d3c.call(yAxis.gen);
 
 		// Put axis titles
 		xAxis.d3c.append('text').
@@ -62,7 +62,7 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 			style('text-anchor', 'middle').text('Per-capita income [$]');
 
 		yAxis.d3c.append('text').
-			attr('transform', 'translate(' + (-2) + ',' + (0)+ ')').
+			attr('transform', 'translate(' + [-2, 0] + ')').
 			attr('x', 0).attr('y', 0).
 			attr('dy', '0.5em').
 			attr('class', 'title').
@@ -81,34 +81,40 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 			append('rect').
 			attr('x', 0).attr('y', 0).attr('height', chart.plot.BBox.h).attr('width', chart.plot.BBox.w);
 
-
-
 		// Create a rectangle that serves to catch all clicks outside of bubbles
         chart.plot.d3c.append('rect').attr('class', 'scatter-border').
 			attr('x', 0).attr('y', 0).attr('height', chart.plot.BBox.h).attr('width', chart.plot.BBox.w).
 			style('fill', 'none').style('pointer-events', 'all').
 			on('click', function(d) { this.ctrl.plotClicked(); }.bind(this));
 
+		// Draw the Least-Square Regression Line fit
+		var lsrl_x1 = xAxis.scale.range()[0],
+			lsrl_x2 = xAxis.scale.range()[1],
+			lsrl_y1 = yAxis.scale(model.getLSRLintercept()),
+			lsrl_y2 = yAxis.scale(model.getLSRLintercept() + model.getLSRLslope() * xAxis.scale.domain()[1]);
+			
+		chart.plot.d3c.append('line').attr('class', 'fit-model-line').
+			attr('x1', lsrl_x1).attr('y1', lsrl_y1).attr('x2', lsrl_x2).attr('y2', lsrl_y2);
+		
         // The canvas to contain the bubble mesh
         var bubbles = chart.plot.d3c.append('g').attr('class', 'bubbles').
             /*attr('clip-path', 'url(#scatter-clipPath)').*/
 			append('g');
 
-        // Draw the states
+        // Draw the state bubbles
         bubbles.selectAll('circle').
-            data(model.tblLoanIncome).
+            data(model.tblLoanState).
             enter().
 			datum(function(d) { d.active = false; return d; }).
             append('circle').
-            attr('class', 'bubble'/*function(d) {
-                // This is the class determining the quantized color
-				return map.scale(model.mapStateIncome.get(d.properties.name));
-			}*/).
+            attr('class', 'bubble').
 			attr('id', function(d) {
-                return 'id-scatter-state-' + d.name;
+                return 'id-scatter-state-' + d.key;
             }).
-            attr('cx', function(d) { return chart.xAxis.scale(d.income);} ).
-			attr('cy', function(d) { return chart.yAxis.scale(d.loan);} ).
+			// X coordinate is the state's income per capita
+            attr('cx', function(d) { return chart.xAxis.scale(model.mapStateIncome.get(d.key));} ).
+			// Y coordinate is the state's average loan amount
+			attr('cy', function(d) { return chart.yAxis.scale(d.value);} ).
 			attr('r', 10).
 			on('mouseenter', function(d) {
                 this.ctrl.bubbleHovered(d, true);
@@ -171,24 +177,31 @@ scatterView.showDetails = function(d) {
 	var y = this.gui.chart.yAxis.scale;
 	var x = this.gui.chart.xAxis.scale;
 
-	y_coord = y(d.loan);
-	x_coord = x(d.income);
+	y_coord = y(d.value);
+	x_coord = x(model.mapStateIncome.get(d.key));
 
 	// Draw the annotation lines
 	var ann = d3c.append('g').attr('class', 'scatter-annotation annotation');
 	ann.append('line').attr('x1', x_coord).attr('y1', y_coord).
-		attr('x2', x_coord).attr('y2', y_coord).transition().duration(500).attr('y2', (this.gui.chart.plot.BBox.h));
+		attr('x2', x_coord).attr('y2', y_coord).
+		transition().duration(500).
+		attr('y2', (this.gui.chart.plot.BBox.h));
 
 	ann.append('line').attr('x1', x_coord).attr('y1', y_coord).
-		attr('x2', x_coord).attr('y2', y_coord).transition().duration(500).attr('x2', 0);
+		attr('x2', x_coord).attr('y2', y_coord).
+		transition().duration(500).attr('x2', 0);
 
 	// Draw the bubble
 	var bubble = ann.append('g').style('opacity', 0);
-	bubble.append('rect').attr('x', x_coord-25).attr('y', y_coord-35).attr('width', 80).attr('height', 30).
+	bubble.append('rect').attr('x', x_coord-25).attr('y', y_coord-45).attr('width', 80).attr('height', 40).
 		attr('rx', 3).attr('ry', 3);
 
-	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).text('State:  ' + d.name)
-	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).text('Income: ' + d.income);
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-30).
+		text('State:  ' + d.key)
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
+		text('Income: ' + d3.format(",d")(model.mapStateIncome.get(d.key)));
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
+		text('Loan:   ' + d3.format(",d")(d.value));
 
 	bubble.transition().duration(500).style('opacity', 1);
 }; // end function scatterView.showDetails(...)
@@ -208,7 +221,7 @@ scatterView.getState = function(p) {
 		return this.gui.chart.plot.d3c.select('#' + 'id-scatter-state-' + p);
 	} else {
 		// The state is specified e.g. via its datum Object
-		return this.gui.chart.plot.d3c.select('#' + 'id-scatter-state-' + p.name);
+		return this.gui.chart.plot.d3c.select('#' + 'id-scatter-state-' + p.key);
 	}
 };
 
@@ -252,7 +265,7 @@ var chart_scatterCtrl = {
 
 		if (callParent) {
 		    // Push up this event to the parent controller so that other views can respond
-		    this.parentCtrl.bubbleHovered(d.name, flShow);
+		    this.parentCtrl.bubbleHovered(d.key, flShow);
     	}
 	},
 
@@ -261,7 +274,7 @@ var chart_scatterCtrl = {
 
 		if (callParent) {
 			var flActive = this.view.getBubbleStatus(d);
-			this.parentCtrl.bubbleClicked(d.name, flActive);
+			this.parentCtrl.bubbleClicked(d.key, flActive);
 		}
     },
 

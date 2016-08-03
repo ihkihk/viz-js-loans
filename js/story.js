@@ -117,7 +117,7 @@ storyView.createButtonRibbon = function() {
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[0].x, btnDrawOrigins[0].y, this.gui.btn.bw, this.gui.btn.bh,
-		'Which state takes highest loans', 'story-button', this.butId[0],
+		'People in richer states take higher loans', 'story-button', this.butId[0],
 		function() { this.ctrl.selectPage(0); }.bind(this));
 
 	drawTextButton(this.gui.cRibbon.d3c,
