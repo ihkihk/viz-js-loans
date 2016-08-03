@@ -222,7 +222,7 @@ chartStatesView.showDetails = function(d) {
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
 		text('State:  ' + d.State);
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
-		text('Income: ' + d['Per capita income']);
+		text('Income: ' + d3.format(",d")(d['Per capita income']));
 
 	bubble.transition().duration(500).style('opacity', 1);
 }; // end function chartStatesView.showDetails(...)

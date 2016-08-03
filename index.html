@@ -152,15 +152,15 @@
 		dataReady: function(error, data) {
 			if (error) throw error;
 
-			model.loadStatesTable(data);
+			model.loadDataTables(data);
 			//alert("Data was loaded OK!");
 		}
 	};
 
 	d3.queue()
-		//.defer(d3.csv, "data/prosper_loans.csv")
 		.defer(d3.json, "data/USA.json")
-		.defer(d3.csv, "data/Income data for US states.csv", model.processIncomeData.bind(model))
+		.defer(d3.csv, "data/Income data for US states.csv", model.processIncomeDataRow.bind(model))
+		.defer(d3.csv, "data/prosperLoanData.csv", model.processProsperDataRow.bind(model))
 		.awaitAll(mainCtrl.dataReady);
 
 	mainCtrl.init('#div-chart');

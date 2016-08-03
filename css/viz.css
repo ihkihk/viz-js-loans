@@ -223,4 +223,11 @@
 .legend .title {
 	font-weight: bold;
 }
+
+.scatter .fit-model-line {
+	stroke: pink;
+	stroke-width: 3px;
+	opacity: 0.5;
+	stroke-dasharray: 8 4;
+}
 /* EOF */
