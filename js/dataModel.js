@@ -79,12 +79,11 @@ var model = {
     },
 	
 	computeRegressionLine: function(xArray, yArray) {
-		var xxArray, xyArray=[], yyArray;
-		var a, b, sumX, sumY, sumXY, sumXX, sumYY;
+		var xxArray, xyArray=[];
+		var a, b, sumX, sumY, sumXY, sumXX;
 		
 		xxArray = xArray.map(function(d) { return d*d; });
-		yyArray = yArray.map(function(d) { return d*d; });
-		
+
 		for (var i = 0; i < xArray.length; i++) {
 			xyArray.push(xArray[i] * yArray[i]);
 		}
@@ -92,7 +91,6 @@ var model = {
 		sumX = d3.sum(xArray);
 		sumY = d3.sum(yArray);
 		sumXX = d3.sum(xxArray);
-		sumYY = d3.sum(yyArray);
 		sumXY = d3.sum(xyArray);
 		
 		a = (sumY * sumXX - sumX * sumXY) / (xArray.length * sumXX - sumX * sumX);

@@ -201,7 +201,7 @@ scatterView.showDetails = function(d) {
 		attr('rx', 3).attr('ry', 3);
 
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-30).
-		text('State:  ' + d.key)
+		text('State:  ' + d.key);
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
 		text('Income: ' + d3.format(",d")(model.mapStateIncome.get(d.key)));
 	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
