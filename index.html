@@ -125,10 +125,6 @@
 				attr('transform', 'translate(' + this.viewport.padding +
 					', ' + this.viewport.padding + ')');
 
-			// TODO: Remove this debug code
-			dbgRect(this.storyViewCanvas.d3c, 0, 0,
-				this.storyViewCanvas.size.w, this.storyViewCanvas.size.h);
-
 			this.storyCtrl.createView(this.storyViewCanvas, this);
 		},
 

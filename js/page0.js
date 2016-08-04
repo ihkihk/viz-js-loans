@@ -26,8 +26,6 @@ page0View.create = function(canvas, ctrl, flShow=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'page');
 
-	dbgRect(this.cView.d3c, 0, 0, this.cView.iw, this.cView.ih, 'green');
-
 	this.gui.barchartCanvas.size.w = this.cView.iw/2;
 	this.gui.barchartCanvas.size.h = this.cView.ih;
 

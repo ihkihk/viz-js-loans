@@ -51,7 +51,7 @@
 }
 
 .bkgrnd-page {
-	fill: lightYellow;
+	fill: lightGray;
 	opacity: 1;
 	stroke: none;
 	/*stroke-width: 1px;*/
@@ -189,7 +189,7 @@
 .q8-9 { fill:rgb(8,48,107); }
 
 .map .map-border {
-    stroke: black;
+    stroke: none;
 	shape-rendering: crispEdges;
 }
 

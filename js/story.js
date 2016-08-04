@@ -134,13 +134,6 @@ storyView.createButtonRibbon = function() {
 
 	// # <<< Draw the buttons
 
-	// >>> TODO: Remove this debug code
-	dbgRect(this.cView.d3c, this.gui.cRibbon.o.x, this.gui.cRibbon.o.y, this.gui.cRibbon.w, this.gui.cRibbon.h);
-	dbgRect(this.gui.cRibbon.d3c, btnBBoxOrigins[0].x, btnBBoxOrigins[0].y, this.gui.btn.w, this.gui.btn.h);
-	dbgRect(this.gui.cRibbon.d3c, btnBBoxOrigins[1].x, btnBBoxOrigins[1].y, this.gui.btn.w, this.gui.btn.h);
-	dbgRect(this.gui.cRibbon.d3c, btnBBoxOrigins[2].x, btnBBoxOrigins[2].y, this.gui.btn.w, this.gui.btn.h);
-	// <<< end remove
-
 }; // end function createButtonRibbon(...)
 
 storyView.setButtonState = function(butNo, flState) {

@@ -16,8 +16,6 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'scatter');
 
-	dbgRect(this.cView.d3c, 0, 0, this.cView.iw, this.cView.ih, 'green');
-
     this.show(flShow);
 
 	function drawChart() {
