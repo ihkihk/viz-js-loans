@@ -195,14 +195,14 @@ scatterView.showDetails = function(d) {
 
 	// Draw the bubble
 	var bubble = ann.append('g').style('opacity', 0);
-	bubble.append('rect').attr('x', x_coord-25).attr('y', y_coord-45).attr('width', 80).attr('height', 40).
+	bubble.append('rect').attr('x', x_coord-25).attr('y', y_coord-50).attr('width', 80).attr('height', 40).
 		attr('rx', 3).attr('ry', 3);
 
-	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-30).
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-35).
 		text('State:  ' + d.key);
-	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-20).
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-25).
 		text('Income: ' + d3.format(",d")(model.mapStateIncome.get(d.key)));
-	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-10).
+	bubble.append('text').attr('x', x_coord-20).attr('y', y_coord-15).
 		text('Loan:   ' + d3.format(",d")(d.value));
 
 	bubble.transition().duration(500).style('opacity', 1);
