@@ -37,6 +37,7 @@
 	<script type='text/javascript' src='js/page1.js'></script>
 	<script type='text/javascript' src='js/page2.js'></script>
 	<script type='text/javascript' src='js/story.js'></script>
+	<script type='text/javascript' src='js/mainCtrl.js'></script>
 
 	<!--Own CSS-->
 	<link href='css/viz.css' rel='stylesheet' type='text/css'>
@@ -98,68 +99,19 @@
 	</div>
 
 	<script type='text/javascript'>
-	'use strict';
-	
-	/* global d3, storyCtrl, dbgRect, model */
+		'use strict';
 
-	var mainCtrl = {
-		storyCtrl: storyCtrl,
+		/* global d3, mainCtrl, model */
 
-		viewport: {
-			padding: 10,
-			d3c: null
-		},
+		// Start loading the data
+		d3.queue()
+			.defer(d3.json, "data/USA.json")
+			.defer(d3.csv, "data/Income data for US states.csv", model.processIncomeDataRow.bind(model))
+			.defer(d3.csv, "data/prosperLoanData.csv", model.processProsperDataRow.bind(model))
+			.awaitAll(mainCtrl.dataReady);
 
-		storyViewCanvas: {
-			d3c: null,
-			// Note: story_width and story_height are in golder ratio
-			size: {w: 1300, h: 800}
-		},
-
-		init: function(parent_div) {
-			this.createViewport(parent_div);
-
-			this.storyViewCanvas.d3c = this.viewport.d3c.
-				append('g').
-				// Move the coordinate origin to consider the margins around the story view
-				attr('transform', 'translate(' + this.viewport.padding +
-					', ' + this.viewport.padding + ')');
-
-			this.storyCtrl.createView(this.storyViewCanvas, this);
-		},
-
-		createViewport: function(parent_div) {
-			this.viewport.d3c  = d3.select(parent_div).
-				append('svg').
-				attr('class', 'viz-viewport').
-				attr('width', this.storyViewCanvas.size.w + 2 * this.viewport.padding).
-				attr('height', this.storyViewCanvas.size.h + 2 * this.viewport.padding);
-
-			this.viewport.d3c.append('rect').
-				attr('class', 'bkgrnd-viz').
-				attr('x', this.viewport.padding).
-				attr('y', this.viewport.padding).
-				attr('width', this.storyViewCanvas.size.w).
-				attr('height', this.storyViewCanvas.size.h).
-				attr('rx', '10px').
-				attr('ry', '10px');
-		}, // end function createCanvas(...)
-
-		dataReady: function(error, data) {
-			if (error) throw error;
-
-			model.loadDataTables(data);
-			//alert("Data was loaded OK!");
-		}
-	};
-
-	d3.queue()
-		.defer(d3.json, "data/USA.json")
-		.defer(d3.csv, "data/Income data for US states.csv", model.processIncomeDataRow.bind(model))
-		.defer(d3.csv, "data/prosperLoanData.csv", model.processProsperDataRow.bind(model))
-		.awaitAll(mainCtrl.dataReady);
-
-	mainCtrl.init('#div-chart');
+		// Create the main controller
+		mainCtrl.init('#div-chart');
 	</script>
 
 	<footer>
