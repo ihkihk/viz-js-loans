@@ -1,6 +1,6 @@
 "use strict";
 
-/* global d3, View, dbgRect, model */
+/* global d3, View, waitfor, model */
 
 var chartStatesView = new View();
 
@@ -140,17 +140,12 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
 
 		// Show details by default
 		this.ctrl.iconDetailsClicked();
-	}
+		
+		// Announce that the view has finished loading
+		this.flViewLoaded = true;
+	} // end function drawChart(...)
 
-    // Wait for data to be loaded
-    function waitfor(that, obj, checkfunc, callback) {
-        while (checkfunc.call(obj) == false) {
-            setTimeout(waitfor, 500, that, obj, checkfunc, callback);
-			return;
-        }
-        drawChart.call(that);
-    }
-
+    // Wait for data to be loaded before drawing the chart
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function chartStatesView.create(...)
 
@@ -361,14 +356,18 @@ var chart_barStatesCtrl = {
 		this.barHovered(bar.datum(), flShow, false);
 	},
 
-	simulateBarClick: function(state) {
+	simulateBarClick: function(state, callParent=false) {
 		// Something has been clicked in another view - respond here too
 		var bar = this.view.getBar(state);
-		this.barClicked(bar.datum(), false);
+		this.barClicked(bar.datum(), callParent);
 	},
 
 	simulatePlotClick: function() {
 		this.plotClicked(false);
+	},
+	
+	isViewLoaded: function() {
+		return this.view.isViewLoaded();
 	}
 
 	// # <<< Messages coming from the parent controller

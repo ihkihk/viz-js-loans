@@ -1,6 +1,6 @@
 "use strict";
 
-/* global d3, View, dbgRect, model */
+/* global d3, View, waitfor, model */
 
 var scatterView = new View();
 
@@ -125,17 +125,12 @@ scatterView.create = function(canvas, ctrl, flShow=false)
                 this.ctrl.bubbleHovered(d, false);
             }.bind(this)).
 			on('click', function(d) { this.ctrl.bubbleClicked(d); }.bind(this));
+			
+		// Announce that the view has finished loading
+		this.flViewLoaded = true;
 	} // end function drawChart(...)
 
-    // Wait for data to be loaded
-    function waitfor(that, obj, checkfunc, callback) {
-        while (checkfunc.call(obj) == false) {
-            setTimeout(waitfor, 500, that, obj, checkfunc, callback);
-			return;
-        }
-        drawChart.call(that);
-    }
-
+    // Wait for data to be loaded before drawing the chart
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function mapStatesView.create(...)
 
@@ -301,7 +296,11 @@ var chart_scatterCtrl = {
 
 	simulatePlotClick: function() {
 		this.plotClicked(false);
-	}
+	},
+	
+	isViewLoaded: function() {
+		return this.view.isViewLoaded();
+	},
 
 	// # <<< Messages coming from the parent controller
 };

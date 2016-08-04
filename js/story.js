@@ -192,6 +192,8 @@ var storyCtrl = {
 
 	configPages: function() {
 		this.selectPage(0);
+		// Select the DC having highest per-capita income and average loan amount
+		this.pageCtrl[0].selectState('DC');
 	},
 
 	createView: function(canvas, parentCtrl) {
@@ -201,4 +203,3 @@ var storyCtrl = {
 };
 
 /* EOF */
-
