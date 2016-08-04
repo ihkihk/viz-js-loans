@@ -126,6 +126,12 @@ var page0Ctrl = {
 		this.mapCtrl.simulateMapClick();
 		this.barchartCtrl.simulatePlotClick();
 	},
+
+	selectState: function(state) {
+		// Waiting for all charts to finish drawing (after data has loaded)
+		....
+		this.barchartCtrl.parentSaidSelectState(state);
+	}
 };
 
 /* EOF */

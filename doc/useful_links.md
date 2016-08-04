@@ -1,8 +1,11 @@
 # SVG
 * <https://benfrain.com/applying-multiple-svg-filter-effects-defined-in-css-or-html/>
 * <https://css-tricks.com/svg-use-external-source/>
+* <http://www.december.com/html/spec/colorsvg.html>
 
-# HTML
+# Graphics, Color, Typography, Design
+* <http://www.flaticon.com/>
+* <http://colorbrewer2.org/>
 
 # JS
 * <http://javascriptissexy.com/javascript-apply-call-and-bind-methods-are-essential-for-javascript-professionals/>
@@ -28,3 +31,6 @@
 
 # My Tableau Public Profile
 * [My Prosper Loan mock-up](https://public.tableau.com/views/ProsperLoans/Story1?:embed=y&:display_count=yes&:showTabs=y)
+
+# Misc
+* [Calculating LS regression line](http://www.statisticshowto.com/how-to-find-a-linear-regression-equation/)

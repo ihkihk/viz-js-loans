@@ -369,6 +369,10 @@ var chart_barStatesCtrl = {
 
 	simulatePlotClick: function() {
 		this.plotClicked(false);
+	},
+
+	parentSaidSelectState: function(state) {
+		
 	}
 
 	// # <<< Messages coming from the parent controller
