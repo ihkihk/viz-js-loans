@@ -1,6 +1,6 @@
 "use strict";
 
-/* global d3, topojson, View, dbgRect, textWrap, model */
+/* global d3, topojson, View, textWrap, model, waitfor */
 
 var mapStatesView = new View();
 
@@ -145,17 +145,12 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			carto.style("stroke-width", 1.5 / d3.event.transform.k + "px").
 				attr("transform", d3.event.transform);
 		}
+		
+		// Announce that the view has finished loading
+		this.flViewLoaded = true;
     } // end function drawChart(...)
 
-    // Wait for data to be loaded
-    function waitfor(that, obj, checkfunc, callback) {
-        while (checkfunc.call(obj) == false) {
-            setTimeout(waitfor, 500, that, obj, checkfunc, callback);
-			return;
-        }
-        callback.call(that);
-    }
-
+    // Wait for data to be loaded before drawing the chart
     waitfor(this, model, model.isDataLoaded, drawChart);
 }; // end function mapStatesView.create(...)
 
@@ -322,7 +317,11 @@ var chart_mapStatesCtrl = {
 
 	simulateMapClick: function() {
 		this.mapClicked(false);
-	}
+	},
+	
+	isViewLoaded: function() {
+		return this.view.isViewLoaded();
+	},
 
 	// # <<< Messages coming from the parent controller
 };

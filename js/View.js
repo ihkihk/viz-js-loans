@@ -29,6 +29,9 @@ function View() {
 
 	// Controller of the view
 	this.ctrl = null;
+	
+	// Flag showing if the view has finished loading
+	this.flViewLoaded = false;
 }
 
 	// Function for creating the view
@@ -87,6 +90,11 @@ View.prototype.show = function(flShow, flAnim=true)
 	} else {
 		this.canvas.d3c.transition().duration(animDuration).style('opacity', state).on('end', function() { d3.select(this).style('display', dspl); });
 	}
+};
+
+// Returns whether the view has finished loading
+View.prototype.isViewLoaded = function() {
+	return this.flViewLoaded;	
 };
 
 /* EOF */

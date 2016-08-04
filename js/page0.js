@@ -1,6 +1,6 @@
 "use strict";
 
-/* global View, dbgRect, chart_barStatesCtrl, chart_mapStatesCtrl, chart_scatterCtrl */
+/* global View, waitfor, chart_barStatesCtrl, chart_mapStatesCtrl, chart_scatterCtrl */
 
 var page0View = new View();
 
@@ -127,10 +127,19 @@ var page0Ctrl = {
 		this.barchartCtrl.simulatePlotClick();
 	},
 
+	isPageLoaded: function() {
+		return this.barchartCtrl.isViewLoaded() &&
+			this.scatterCtrl.isViewLoaded() &&
+			this.mapCtrl.isViewLoaded();
+	},
+	
 	selectState: function(state) {
-		// Waiting for all charts to finish drawing (after data has loaded)
-		waitfor(this.AllChartsLoaded.bind(this));
-		this.barchartCtrl.parentSaidSelectState(state);
+		// Wait for all charts to finish drawing (after data has loaded)
+		// and then select the desired state.
+
+	    waitfor(this, this, this.isPageLoaded, function() { 
+	    	this.barchartCtrl.simulateBarClick(state, true);
+	    }.bind(this));
 	}
 };
 
