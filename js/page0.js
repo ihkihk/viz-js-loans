@@ -97,9 +97,9 @@ var page0Ctrl = {
 		this.scatterCtrl.simulateBubbleHover(state, flShow);
 	},
 
-	mapStateClicked: function(state, flShow) {
-		this.barchartCtrl.simulateBarClick(state, flShow);
-		this.scatterCtrl.simulateBubbleClick(state, flShow);
+	mapStateClicked: function(state) {
+		this.barchartCtrl.simulateBarClick(state);
+		this.scatterCtrl.simulateBubbleClick(state);
 	},
 
 	mapAllDeactivated: function() {
@@ -107,9 +107,9 @@ var page0Ctrl = {
 		this.scatterCtrl.simulatePlotClick();
 	},
 
-	barClicked: function(state, flShow) {
-		this.mapCtrl.simulateStateClick(state, flShow);
-		this.scatterCtrl.simulateBubbleClick(state, flShow);
+	barClicked: function(state) {
+		this.mapCtrl.simulateStateClick(state);
+		this.scatterCtrl.simulateBubbleClick(state);
 	},
 
 	barAllDeactivated: function() {
@@ -117,9 +117,9 @@ var page0Ctrl = {
 		this.scatterCtrl.simulatePlotClick();
 	},
 
-	bubbleClicked: function(state, flShow) {
-		this.mapCtrl.simulateStateClick(state, flShow);
-		this.barchartCtrl.simulateBarClick(state, flShow);
+	bubbleClicked: function(state) {
+		this.mapCtrl.simulateStateClick(state);
+		this.barchartCtrl.simulateBarClick(state);
 	},
 
 	scatterAllDeactivated: function() {

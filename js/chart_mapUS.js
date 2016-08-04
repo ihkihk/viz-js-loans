@@ -107,40 +107,40 @@ mapStatesView.create = function(canvas, ctrl, flShow=false)
 			on('click', function(d) { this.ctrl.stateClicked(d); }.bind(this));
 
 		// # >>> Draw the legend
-		
+
 		// Legend canvas
 		var legend = map.d3c.append('g').attr('class', 'legend legend-map').
 			attr('transform', 'translate(10, 10)').style('pointer-events', 'none');
-		
+
 		// Legend background
 		legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 63).attr('height', 125).
 			attr('class', 'bkgrnd-legend');
-			
+
 		// Legend title
 		legend.append('g').attr('transform', 'translate(0, 0)').
 			append('text').attr('class', 'title').
 			attr('x', 30).attr('y', 13).attr('dy', 0.8).
 			style('alignment-baseline', 'middle').style('text-anchor', 'middle').
 			text('Per-capita income [$]').call(textWrap, 60);
-			
+
 		// Legend bubble + text
 		var legendItems = legend.append('g').attr('transform', 'translate(3, 30)').
 			selectAll('rect').
 			data(scale.range()).
 			enter().
 			append('g').attr('transform', function(d, i) { return 'translate(0, ' + (i * 10) + ')'; });
-			
+
 		legendItems.append('rect').attr('x', 0).attr('y', 0).
 			attr('width', 10).attr('height', 10).attr('class', function(d) { return d; });
-		
+
 		legendItems.append('text').attr('x', 12).attr('y', 5).style('alignment-baseline', 'middle').
 			text(function(d, i) {
 				var t = Math.round(+scale.invertExtent(d)[1]);
 				return 'to ' + d3.format(",.2r")(t);
 			});
-			
+
 		// # <<< Draw the legend
-		
+
 		function zoomed() {
 			carto.style("stroke-width", 1.5 / d3.event.transform.k + "px").
 				attr("transform", d3.event.transform);
@@ -198,11 +198,6 @@ mapStatesView.clickState = function(d) {
 		// Place an annotation
 		this.addDetails(d);
 	}
-};
-
-mapStatesView.getStateStatus = function(d) {
-	return !(d.properties.active == undefined ||
-		d.properties.active == false);
 };
 
 mapStatesView.resetMap = function() {
@@ -283,7 +278,7 @@ var chart_mapStatesCtrl = {
 	},
 
 	// # >>> Events from user's GUI actions
-	
+
     mapHovered: function(d, flShow, callParent=true) {
 		this.view.hoverMap(d, flShow);
 
@@ -298,9 +293,8 @@ var chart_mapStatesCtrl = {
 		this.view.clickState(d);
 
 		if (callParent) {
-			var flActive = this.view.getStateStatus(d);
 			var state = model.mapStateName2Acro.get(d.properties.name);
-			this.parentCtrl.mapStateClicked(state, flActive);
+			this.parentCtrl.mapStateClicked(state);
 		}
     },
 
@@ -321,7 +315,7 @@ var chart_mapStatesCtrl = {
         this.mapHovered(s.datum(), flShow, false);
     },
 
-	simulateStateClick: function(state, flActivate) {
+	simulateStateClick: function(state) {
 		var s = this.view.getState(state);
 		this.stateClicked(s.datum(), false);
 	},

@@ -94,10 +94,10 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 			lsrl_x2 = xAxis.scale.range()[1],
 			lsrl_y1 = yAxis.scale(model.getLSRLintercept()),
 			lsrl_y2 = yAxis.scale(model.getLSRLintercept() + model.getLSRLslope() * xAxis.scale.domain()[1]);
-			
+
 		chart.plot.d3c.append('line').attr('class', 'fit-model-line').
 			attr('x1', lsrl_x1).attr('y1', lsrl_y1).attr('x2', lsrl_x2).attr('y2', lsrl_y2);
-		
+
         // The canvas to contain the bubble mesh
         var bubbles = chart.plot.d3c.append('g').attr('class', 'bubbles').
             /*attr('clip-path', 'url(#scatter-clipPath)').*/
@@ -235,10 +235,6 @@ scatterView.hoverBubble = function(d, flShow) {
 	this.ctrl.handleDetails(bubble.datum(), flShow);
 };
 
-scatterView.getBubbleStatus = function(d) {
-	return d.active;
-};
-
 
 /******************************************************************************/
 
@@ -275,8 +271,7 @@ var chart_scatterCtrl = {
 		this.view.clickBubble(d);
 
 		if (callParent) {
-			var flActive = this.view.getBubbleStatus(d);
-			this.parentCtrl.bubbleClicked(d.key, flActive);
+			this.parentCtrl.bubbleClicked(d.key);
 		}
     },
 
@@ -298,7 +293,7 @@ var chart_scatterCtrl = {
         this.bubbleHovered(bubble.datum(), flShow, false);
     },
 
-	simulateBubbleClick: function(state, flActivate) {
+	simulateBubbleClick: function(state) {
 		var bubble = this.view.getState(state);
 
 		this.bubbleClicked(bubble.datum(), false);

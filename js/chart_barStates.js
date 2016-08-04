@@ -259,9 +259,6 @@ chartStatesView.deactivateAll = function() {
 	}
 };
 
-chartStatesView.getBarStatus = function(d) {
-	return d.active;
-};
 
 chartStatesView.hiliteBar = function(d) {
 	var bar = this.getBar(d);
@@ -343,8 +340,7 @@ var chart_barStatesCtrl = {
 		this.view.clickBar(d);
 
 		if (callParent) {
-			var flActive = this.view.getBarStatus(d);
-			this.parentCtrl.barClicked(d.State, flActive);
+			this.parentCtrl.barClicked(d.State);
 		}
 	},
 
@@ -365,7 +361,7 @@ var chart_barStatesCtrl = {
 		this.barHovered(bar.datum(), flShow, false);
 	},
 
-	simulateBarClick: function(state, flShow) {
+	simulateBarClick: function(state) {
 		// Something has been clicked in another view - respond here too
 		var bar = this.view.getBar(state);
 		this.barClicked(bar.datum(), false);
