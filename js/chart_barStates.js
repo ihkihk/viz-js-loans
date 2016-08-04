@@ -148,7 +148,7 @@ chartStatesView.create = function(canvas, ctrl, flShow=false)
             setTimeout(waitfor, 500, that, obj, checkfunc, callback);
 			return;
         }
-        drawChart.call(that);
+        callback.call(that);
     }
 
     waitfor(this, model, model.isDataLoaded, drawChart);

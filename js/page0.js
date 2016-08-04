@@ -129,7 +129,7 @@ var page0Ctrl = {
 
 	selectState: function(state) {
 		// Waiting for all charts to finish drawing (after data has loaded)
-		....
+		waitfor(this.AllChartsLoaded.bind(this));
 		this.barchartCtrl.parentSaidSelectState(state);
 	}
 };

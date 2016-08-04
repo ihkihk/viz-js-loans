@@ -129,11 +129,11 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 
     // Wait for data to be loaded
     function waitfor(that, obj, checkfunc, callback) {
-        while (checkfunc.call(obj) == false) {
+        while (checkfunc().call(obj) == false) {
             setTimeout(waitfor, 500, that, obj, checkfunc, callback);
 			return;
         }
-        drawChart.call(that);
+        callback.call(that);
     }
 
     waitfor(this, model, model.isDataLoaded, drawChart);
