@@ -1,6 +1,6 @@
 "use strict";
 
-/* global d3, View, waitfor, model */
+/* global d3, View, waitfor, model, drawSpinner */
 
 var scatterView = new View();
 
@@ -130,8 +130,13 @@ scatterView.create = function(canvas, ctrl, flShow=false)
 		this.flViewLoaded = true;
 	} // end function drawChart(...)
 
-    // Wait for data to be loaded before drawing the chart
-    waitfor(this, model, model.isDataLoaded, drawChart);
+	var spinner = drawSpinner(this.cView);
+
+	// Wait for data to be loaded before drawing the chart
+    waitfor(this, model, model.isDataLoaded, function() { 
+    	spinner.remove(); 
+    	drawChart.call(this);
+    });
 }; // end function mapStatesView.create(...)
 
 

@@ -7,6 +7,10 @@
 * <http://www.flaticon.com/>
 * <http://colorbrewer2.org/>
 
+# CSS
+* [Spinners](http://tobiasahlin.com/spinkit/)
+* [Loading icons in SVG, CSS and GIF](http://loading.io/)
+
 # JS
 * <http://javascriptissexy.com/javascript-apply-call-and-bind-methods-are-essential-for-javascript-professionals/>
 * <http://perfectionkills.com/understanding-delete/>

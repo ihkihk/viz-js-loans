@@ -11,7 +11,6 @@
 /*@import url("filter.svg");*/
 
 .bkgrnd-viz {
-
     fill: rgb(11,60,77); /*dimgray;*/
     fill-opacity: 0.6;
     stroke: black;
@@ -175,7 +174,6 @@
 
 .map .state.active{
     fill: orange;
-
 }
 
 .map .state:not(.active):hover, .map .state:not(.active).hovered {
@@ -235,4 +233,41 @@
 	opacity: 0.5;
 	stroke-dasharray: 8 4;
 }
+
+/* Code below taken from http://tobiasahlin.com/spinkit/ */
+.spinner {
+  /*width: 40px;
+  height: 40px;
+  background-color: #333;*/
+  fill: brown;
+    transform-origin: center center;
+  /*margin: 100px auto;*/
+  /*animation: sk-rotateplane 1.2s infinite ease-in-out;*/
+  animation: sk-scaleout 1.0s infinite ease-in-out;
+}
+
+@keyframes sk-rotateplane {
+  0%   { transform: perspective(120px) rotateX(0deg)      rotateY(0deg); } 
+  50%  { transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); } 
+  100% { transform: perspective(120px) rotateX(-180deg)   rotateY(-179.9deg); }
+}
+
+
+@keyframes sk-scaleout {
+  0% { 
+    transform: scale(0);
+  } 100% {
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+.spinner-text {
+    font-weight: bold;
+    font-size: 14px;
+    fill: brown;
+    alignment-baseline: middle;
+    text-anchor: middle;
+}
+
 /* EOF */
