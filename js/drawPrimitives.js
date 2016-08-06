@@ -93,6 +93,36 @@ function textWrap(text, width) {
 	});
 } // end function textWrap(...)
 
+function drawSpinner(cView) {
+		
+	var spinner = {
+		BBox: { w: 100, h: 150, x: cView.iw/2 - 50, y: cView.ih/2 - 50 },
+		d3c: null
+	};
+	
+	/*this.cView.d3c.append('image').attr('href', 'icons/spinner.svg').
+		attr('width', 50).attr('height', 50);*/
+	
+	/*this.cView.d3c.append('rect').attr('x', 20).
+		attr('y', 20).attr('width', 40).attr('height', 40).
+		attr('class', 'spinner');*/
+		
+	// Create the spinner canvas
+	spinner.d3c = cView.d3c.append('g').
+		attr('class', 'spinner-canvas').
+		attr('transform', 'translate(' + [spinner.BBox.x, spinner.BBox.y] + ')');
+		
+	// Create the spinner itself
+	spinner.d3c.append('circle').attr('class', 'spinner').
+		attr('cx', spinner.BBox.w/2).attr('cy', (spinner.BBox.h-50)/2).attr('r', spinner.BBox.w/2);
+		
+	// Create the loading text
+	spinner.d3c.append('text').attr('x', spinner.BBox.w/2).attr('y', spinner.BBox.h-50).text("Loading data...").
+		attr('class', 'spinner-text');
+		
+	return spinner.d3c;
+} // end function drawSpinner(...)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Return a CSS property of a given element that is measured in px.
 //
