@@ -1,6 +1,6 @@
 "use strict";
 
-/* global d3, View, dbgRect, page0Ctrl, page1Ctrl, page2Ctrl, drawTextButton */
+/* global d3, View, textWrap, page0Ctrl, page1Ctrl, page2Ctrl, drawTextButton */
 
 var storyView = new View();
 
@@ -22,14 +22,14 @@ storyView.gui = {
 			size: {w: null, y: null}
 		},
 		{
-		o: {x: null, y: null},
-		d3c: null,
-		size: {w: null, y: null}
+			o: {x: null, y: null},
+			d3c: null,
+			size: {w: null, y: null}
 		},
 		{
-		o: {x: null, y: null},
-		d3c: null,
-		size: {w: null, y: null}
+			o: {x: null, y: null},
+			d3c: null,
+			size: {w: null, y: null}
 		}
 	],
 	cRibbon: {
@@ -44,16 +44,9 @@ storyView.gui = {
 	},
 }; // end storyView.gui{...}
 
-storyView.cView = {
-	iw: null, ih: null,
-	bt: null,
-	bw: null, bh: null,
-	w: null, h: null,
-	m: {t: 10, b: 10, l: 10, r: 10},
-	p: {t: 5, b: 5, l: 5, r: 5},
-	d3c_outer: null,
-	d3c: null
-};
+storyView.cView.m = {t: 10, b: 10, l: 10, r: 10};
+storyView.cView.p = {t: 5, b: 5, l: 5, r: 5};
+
 
 storyView.create = function(canvas, ctrl)
 {
@@ -63,6 +56,18 @@ storyView.create = function(canvas, ctrl)
 
 	this.createButtonRibbon();
 	this.createPages();
+	
+	this.cView.d3c.append('text').
+		attr('x', 20).attr('y', this.cView.bh).
+		attr('class', 'impressum-btn').
+		text('Impressum').
+		on('mouseenter', function() { this.style.fill = 'blue';}).
+		on('mouseout', function() { this.style.fill = 'black';}).
+		on('click', function() { 
+			d3.select('body .impressum').
+			style('opacity', 0).style('display', 'block').
+			transition(800).style('opacity', 1);
+		});
 }; // end function create(...)
 
 storyView.createButtonRibbon = function() {
@@ -73,7 +78,8 @@ storyView.createButtonRibbon = function() {
  	this.gui.btn.h = this.gui.btn.bh + this.gui.btn.m.t + this.gui.btn.m.b;
 
 	// Calculate BBox of the button ribbon
-	this.gui.cRibbon.iw = 3 * this.gui.btn.w + 2 * this.gui.distBtn2Btn;
+	this.gui.cRibbon.iw = this.cView.iw - 500; //3 * this.gui.btn.w + 2 * this.gui.distBtn2Btn;
+	this.gui.distBtn2Btn = (this.gui.cRibbon.iw - 3 * this.gui.btn.w) / 2;
 	this.gui.cRibbon.bw = this.gui.cRibbon.iw +
 		this.gui.cRibbon.p.l + this.gui.cRibbon.p.r;
 	this.gui.cRibbon.ih = this.gui.btn.h;
@@ -84,8 +90,15 @@ storyView.createButtonRibbon = function() {
 	this.gui.cRibbon.h = this.gui.cRibbon.bh +
 		this.gui.cRibbon.m.t + this.gui.cRibbon.m.b;
 
+	// Draw title
+	this.cView.d3c.append('text').attr('class', 'story-title').
+		attr('x', 200).attr('y', 50).attr('dy', '0.8').
+		text("Some insights into Prosper's loan statistics").
+		style('alignment-baseline', 'middle').style('text-anchor', 'middle').
+		call(textWrap, 500);
+	
 	// Calculate offset of the ribbon from the origin of the canvas
- 	this.gui.cRibbon.o.x = (this.cView.iw - this.gui.cRibbon.w) / 2;
+ 	this.gui.cRibbon.o.x = 500; //(this.cView.iw - this.gui.cRibbon.w) / 2;
 	this.gui.cRibbon.o.y = 0;
 
 	// Calculate offsets of the buttons from the origin of the ribbon
@@ -119,17 +132,17 @@ storyView.createButtonRibbon = function() {
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[0].x, btnDrawOrigins[0].y, this.gui.btn.bw, this.gui.btn.bh,
-		'People in richer states take higher loans', 'story-button', this.butId[0],
+		'People in richer states take bigger loans', 'story-button', this.butId[0],
 		function() { this.ctrl.selectPage(0); }.bind(this));
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[1].x, btnDrawOrigins[1].y, this.gui.btn.bw, this.gui.btn.bh,
-		'Which profession takes highest loans', 'story-button', this.butId[1],
+		'Which profession takes the biggest loans', 'story-button', this.butId[1],
 		function() { this.ctrl.selectPage(1); }.bind(this));
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[2].x, btnDrawOrigins[2].y, this.gui.btn.bw, this.gui.btn.bh,
-		'Which people default on their loans', 'story-button', this.butId[2],
+		'Who defaults on their loans', 'story-button', this.butId[2],
 		function() { this.ctrl.selectPage(2); }.bind(this));
 
 	// # <<< Draw the buttons

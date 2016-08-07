@@ -49,6 +49,23 @@
 	font-weight: bold;
 }
 
+.story-title {
+   	font-size : 35px;
+	font-family : Oswald, Verdana, sans-serif;
+	font-weight: bold;
+	fill: lightYellow;
+	/*stroke: black;
+	stroke-width: 1px;*/
+	shape-rendering: crispEdges;
+}
+
+.impressum-btn {
+    font-size : 10px;
+	font-family : Verdana, sans-serif;
+	fill: black;
+	cursor: pointer;
+}
+
 .bkgrnd-page {
 	fill: lightGray;
 	opacity: 1;

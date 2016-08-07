@@ -38,3 +38,4 @@
 
 # Misc
 * [Calculating LS regression line](http://www.statisticshowto.com/how-to-find-a-linear-regression-equation/)
+* [Software Licenses in Plain English](https://tldrlegal.com/)

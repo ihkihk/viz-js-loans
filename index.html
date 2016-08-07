@@ -21,6 +21,7 @@
 
 	<!--Third party CSS-->
 	<link href='https://fonts.googleapis.com/css?family=Vollkorn:400,400italic' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Oswald:700' rel='stylesheet' type='text/css'>
 
 	<!--Third party JS-->
 	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
@@ -64,16 +65,22 @@
 			line-height: 150%;
 		}
 
-		footer {
-			z-index: -1000;
-			display: block;
+		.impressum {
+			background: orange;
+			display: none;
+			border: black 2px solid;
+			border-radius: 10px;
 			position: absolute;
+			transform: translate(-50%, -50%);
 			bottom: 2%;
 			left: 50%;
-			transform: translate(-50%, -50%);
+			padding: 10px;
 
+		}
+		
+		.impressum footer {
 			font-family: Vollkorn, Verdana, sans-serif;
-			font-style: italic;
+			font-style: italic;			
 		}
 
 	</style>
@@ -115,12 +122,24 @@
 		mainCtrl.init('#div-chart');
 	</script>
 
-	<footer>
-	&copy; 2016 Ivailo Kassamakov, Available for use under <a href="https://www.tldrlegal.com/l/mit" target='_blank'>The MIT License</a>
-
-	<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-	<div>Icons made by <a href="http://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-	</footer>
+	<div class='impressum' onclick="this.style.display='none';">
+		<footer>
+		&copy; 2016 Ivailo Kassamakov, Available for use under 
+		<a href="https://www.tldrlegal.com/l/mit" target='_blank'  onclick='event.stopPropagation()'>The MIT License</a>
+	
+		<div>Icons made by <a href="http://www.freepik.com"  target='_blank' title="Freepik" onclick='event.stopPropagation()'>Freepik</a> 
+		from <a href="http://www.flaticon.com"  target='_blank' title="Flaticon" onclick='event.stopPropagation()'>www.flaticon.com</a> is 
+		licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank" onclick='event.stopPropagation()'>CC 3.0 BY</a></div>
+		
+		<div>Icons made by <a href="http://www.flaticon.com/authors/dave-gandy"  target='_blank' title="Dave Gandy" onclick='event.stopPropagation()'>Dave Gandy</a>
+		from <a href="http://www.flaticon.com"  target='_blank' title="Flaticon" onclick='event.stopPropagation()'>www.flaticon.com</a> is 
+		licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank" onclick='event.stopPropagation()'>CC 3.0 BY</a></div>
+		
+		<div>Prosper Loans information provided by Udacity.</div>
+		
+		<div style='float:right'>(Click to dismiss)</div>
+		</footer>
+	</div>
 </body>
 
 </html>
