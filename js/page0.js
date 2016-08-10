@@ -22,7 +22,7 @@ page0View.gui = {
 	}
 };
 
-page0View.create = function(canvas, ctrl, flShow=false)
+page0View.create = function(canvas, ctrl, show=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'page');
 
@@ -51,11 +51,11 @@ page0View.create = function(canvas, ctrl, flShow=false)
 	this.gui.scatterCanvas.d3c = this.cView.d3c.append('g').
 		attr('transform', 'translate('+this.gui.scatterCanvas.o.x+','+this.gui.scatterCanvas.o.y+')');
 
-	this.ctrl.barchartCtrl.createView(this.gui.barchartCanvas, this.ctrl, flShow=true);
-	this.ctrl.mapCtrl.createView(this.gui.mapCanvas, this.ctrl, flShow=true);
-	this.ctrl.scatterCtrl.createView(this.gui.scatterCanvas, this.ctrl, flShow=true);
+	this.ctrl.barchartCtrl.createView(this.gui.barchartCanvas, this.ctrl, true);
+	this.ctrl.mapCtrl.createView(this.gui.mapCanvas, this.ctrl, true);
+	this.ctrl.scatterCtrl.createView(this.gui.scatterCanvas, this.ctrl, true);
 
-	this.show(flShow);
+	this.show(show);
 }; // end function create(...)
 
 
@@ -70,31 +70,31 @@ var page0Ctrl = {
 	parentCtrl: null,
 	pageShown: null,
 
-	createView: function(d3c, parentCtrl, flShow) {
+	createView: function(d3c, parentCtrl, show) {
 		this.parentCtrl = parentCtrl;
-		this.view.create(d3c, this, flShow);
-		this.pageShown = flShow;
+		this.view.create(d3c, this, show);
+		this.pageShown = show;
 	},
 
-	show: function(flShow)
+	show: function(show)
 	{
-		this.pageShown = flShow;
-		View.prototype.show.call(this.view, flShow);
+		this.pageShown = show;
+		View.prototype.show.call(this.view, show);
 	},
 
-	barHovered: function(state, flShow) {
-		this.mapCtrl.simulateMapHover(state, flShow);
-		this.scatterCtrl.simulateBubbleHover(state, flShow);
+	barHovered: function(state, show) {
+		this.mapCtrl.simulateMapHover(state, show);
+		this.scatterCtrl.simulateBubbleHover(state, show);
 	},
 
-	bubbleHovered: function(state, flShow) {
-		this.mapCtrl.simulateMapHover(state, flShow);
-		this.barchartCtrl.simulateBarHover(state, flShow);
+	bubbleHovered: function(state, show) {
+		this.mapCtrl.simulateMapHover(state, show);
+		this.barchartCtrl.simulateBarHover(state, show);
 	},
 
-	mapHovered: function(state, flShow) {
-		this.barchartCtrl.simulateBarHover(state, flShow);
-		this.scatterCtrl.simulateBubbleHover(state, flShow);
+	mapHovered: function(state, show) {
+		this.barchartCtrl.simulateBarHover(state, show);
+		this.scatterCtrl.simulateBubbleHover(state, show);
 	},
 
 	mapStateClicked: function(state) {
@@ -127,7 +127,7 @@ var page0Ctrl = {
 		this.barchartCtrl.simulatePlotClick();
 	},
 
-	isPageLoaded: function() {
+	pageLoaded: function() {
 		return this.barchartCtrl.isViewLoaded() &&
 			this.scatterCtrl.isViewLoaded() &&
 			this.mapCtrl.isViewLoaded();
@@ -137,7 +137,7 @@ var page0Ctrl = {
 		// Wait for all charts to finish drawing (after data has loaded)
 		// and then select the desired state.
 
-	    waitfor(this, this, this.isPageLoaded, function() { 
+	    waitfor(this, this, this.pageLoaded, function() { 
 	    	this.barchartCtrl.simulateBarClick(state, true);
 	    }.bind(this));
 	}

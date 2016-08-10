@@ -4,7 +4,7 @@
 
 var storyView = new View();
 
-storyView.butId = ['viz-story-button-1', 'viz-story-button-2', 'viz-story-button-3'];
+storyView.btnId = ['viz-story-button-1', 'viz-story-button-2', 'viz-story-button-3'];
 
 storyView.gui = {
 	btn: {
@@ -132,27 +132,27 @@ storyView.createButtonRibbon = function() {
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[0].x, btnDrawOrigins[0].y, this.gui.btn.bw, this.gui.btn.bh,
-		'People in richer states take bigger loans', 'story-button', this.butId[0],
+		'People in richer states take bigger loans', 'story-button', this.btnId[0],
 		function() { this.ctrl.selectPage(0); }.bind(this));
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[1].x, btnDrawOrigins[1].y, this.gui.btn.bw, this.gui.btn.bh,
-		'Which profession takes the biggest loans', 'story-button', this.butId[1],
+		'Which profession takes the biggest loans', 'story-button', this.btnId[1],
 		function() { this.ctrl.selectPage(1); }.bind(this));
 
 	drawTextButton(this.gui.cRibbon.d3c,
 		btnDrawOrigins[2].x, btnDrawOrigins[2].y, this.gui.btn.bw, this.gui.btn.bh,
-		'Who defaults on their loans', 'story-button', this.butId[2],
+		'Who defaults on their loans', 'story-button', this.btnId[2],
 		function() { this.ctrl.selectPage(2); }.bind(this));
 
 	// # <<< Draw the buttons
 
 }; // end function createButtonRibbon(...)
 
-storyView.setButtonState = function(butNo, flState) {
-	this.butId.forEach(function(b) { d3.select("#" + b).classed('clicked', false); });
+storyView.setButtonState = function(butNb, clicked) {
+	this.btnId.forEach(function(b) { d3.select("#" + b).classed('clicked', false); });
 
-	d3.select("#" + this.butId[butNo]).classed('clicked', flState);
+	d3.select("#" + this.btnId[butNb]).classed('clicked', clicked);
 };
 
 storyView.createPages = function() {
@@ -195,11 +195,11 @@ var storyCtrl = {
 	parentCtrl: null,
 	currentPage: null,
 
-	selectPage: function(pageNo) {
-		this.currentPage = pageNo;
+	selectPage: function(pageNb) {
+		this.currentPage = pageNb;
 		this.pageCtrl.forEach(function(p) { p.show(false); });
-		this.pageCtrl[pageNo].show(true);
-		this.view.setButtonState(pageNo, true);
+		this.pageCtrl[pageNb].show(true);
+		this.view.setButtonState(pageNb, true);
 	},
 
 

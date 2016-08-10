@@ -12,11 +12,11 @@ scatterView.gui = {
 	}
 };
 
-scatterView.create = function(canvas, ctrl, flShow=false)
+scatterView.create = function(canvas, ctrl, show=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'scatter');
 
-    this.show(flShow);
+    this.show(show);
 
 	function drawChart() {
         var chart = this.gui.chart;
@@ -227,12 +227,12 @@ scatterView.getState = function(p) {
 	}
 };
 
-scatterView.hoverBubble = function(d, flShow) {
+scatterView.hoverBubble = function(d, show) {
 	var bubble = this.getState(d);
 
-	bubble.classed('hovered', flShow);
+	bubble.classed('hovered', show);
 
-	this.ctrl.handleDetails(bubble.datum(), flShow);
+	this.ctrl.handleDetails(bubble.datum(), show);
 };
 
 
@@ -243,13 +243,13 @@ var chart_scatterCtrl = {
     view: scatterView,
     parentCtrl: null,
 
-    createView: function(d3c, parentCtrl, flShow) {
+    createView: function(d3c, parentCtrl, show) {
 		this.parentCtrl = parentCtrl;
-		this.view.create(d3c, this, flShow);
+		this.view.create(d3c, this, show);
 	},
 
-	handleDetails: function(d, flShow) {
-		if (flShow) {
+	handleDetails: function(d, show) {
+		if (show) {
 			this.view.showDetails(d);
 		} else {
 			this.view.hideDetails();
@@ -258,12 +258,12 @@ var chart_scatterCtrl = {
 
 	// # >>> Events from user's GUI actions
 
-	bubbleHovered: function(d, flShow, callParent=true) {
-		this.view.hoverBubble(d, flShow);
+	bubbleHovered: function(d, show, callParent=true) {
+		this.view.hoverBubble(d, show);
 
 		if (callParent) {
 		    // Push up this event to the parent controller so that other views can respond
-		    this.parentCtrl.bubbleHovered(d.key, flShow);
+		    this.parentCtrl.bubbleHovered(d.key, show);
     	}
 	},
 
@@ -287,10 +287,10 @@ var chart_scatterCtrl = {
 
 	// # >>> Messages coming from the parent controller
 
-	simulateBubbleHover: function(state, flShow) {
+	simulateBubbleHover: function(state, show) {
 		var bubble = this.view.getState(state);
 
-        this.bubbleHovered(bubble.datum(), flShow, false);
+        this.bubbleHovered(bubble.datum(), show, false);
     },
 
 	simulateBubbleClick: function(state) {

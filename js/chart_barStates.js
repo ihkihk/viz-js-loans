@@ -19,11 +19,11 @@ chartStatesView.gui = {
 	}
 };
 
-chartStatesView.create = function(canvas, ctrl, flShow=false)
+chartStatesView.create = function(canvas, ctrl, show=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'chartBarStates');
 
-    this.show(flShow);
+    this.show(show);
 
 	function drawChart() {
 		// Y-axis
@@ -229,12 +229,12 @@ chartStatesView.hideDetails = function() {
 	this.gui.chart.plot.d3c.select('.bar-annotation').remove();
 }; // end function chartStatesView.hideDetails(...)
 
-chartStatesView.hoverBar = function(d, flShow) {
+chartStatesView.hoverBar = function(d, show) {
     var bar = this.getBar(d);
 
-    bar.classed('hovered', flShow);
+    bar.classed('hovered', show);
 
-	this.ctrl.handleDetails(bar.datum(), flShow);
+	this.ctrl.handleDetails(bar.datum(), show);
 }; // end function chartStatesView.hoverBar(...)
 
 chartStatesView.clickBar = function(d) {
@@ -282,11 +282,11 @@ var chart_barStatesCtrl = {
     view: chartStatesView,
     parentCtrl: null,
 	sortType: null,
-	flShowDetails: false,
+	showDetails: false,
 
-    createView: function(d3c, parentCtrl, flShow) {
+    createView: function(d3c, parentCtrl, show) {
 		this.parentCtrl = parentCtrl;
-		this.view.create(d3c, this, flShow);
+		this.view.create(d3c, this, show);
 	},
 
 	// # >>> Icon clicks
@@ -310,16 +310,16 @@ var chart_barStatesCtrl = {
 	},
 
 	iconDetailsClicked: function() {
-		this.flShowDetails = !this.flShowDetails;
+		this.showDetails = !this.showDetails;
 
-		this.view.gui.icons['details'].d3c.classed('icon-active', this.flShowDetails);
-		this.view.gui.icons['details'].d3c.classed('icon-inactive', !this.flShowDetails);
+		this.view.gui.icons['details'].d3c.classed('icon-active', this.showDetails);
+		this.view.gui.icons['details'].d3c.classed('icon-inactive', !this.showDetails);
 	},
 
 	// # <<< Icon clicks
 
-	handleDetails: function(d, flShow) {
-		if (flShow && this.flShowDetails) {
+	handleDetails: function(d, show) {
+		if (show && this.showDetails) {
 			this.view.showDetails(d);
 		} else {
 			this.view.hideDetails();
@@ -328,12 +328,12 @@ var chart_barStatesCtrl = {
 
 	// # >>> Events from user's GUI actions
 
-	barHovered: function(d, flShow, callParent=true) {
-		this.view.hoverBar(d, flShow);
+	barHovered: function(d, show, callParent=true) {
+		this.view.hoverBar(d, show);
 
 		if (callParent)
 			// Propagate event to the parent controller so that other views can respond too
-			this.parentCtrl.barHovered(d.State, flShow);
+			this.parentCtrl.barHovered(d.State, show);
 	},
 
 	barClicked: function(d, callParent=true) {
@@ -355,10 +355,10 @@ var chart_barStatesCtrl = {
 
 	// # >>> Messages coming from the parent controller
 
-	simulateBarHover: function(state, flShow) {
+	simulateBarHover: function(state, show) {
 		// Something has been hilited in another view - respond here too
 		var bar = this.view.getBar(state);
-		this.barHovered(bar.datum(), flShow, false);
+		this.barHovered(bar.datum(), show, false);
 	},
 
 	simulateBarClick: function(state, callParent=false) {

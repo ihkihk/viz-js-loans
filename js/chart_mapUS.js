@@ -12,11 +12,11 @@ mapStatesView.gui = {
 	}
 };
 
-mapStatesView.create = function(canvas, ctrl, flShow=false)
+mapStatesView.create = function(canvas, ctrl, show=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'mapStates');
 
-    this.show(flShow);
+    this.show(show);
 
 	function drawChart() {
         var map = this.gui.chart.map;
@@ -247,10 +247,10 @@ mapStatesView.addDetails = function(d) {
 	ann.transition().delay(750).duration(500).style('opacity', 1);
 };
 
-mapStatesView.hoverMap = function(d, flShow) {
+mapStatesView.hoverMap = function(d, show) {
     var state = this.getState(d);
 
-    state.classed('hovered', flShow);
+    state.classed('hovered', show);
 };
 
 mapStatesView.getState = function(p) {
@@ -272,20 +272,20 @@ var chart_mapStatesCtrl = {
     view: mapStatesView,
     parentCtrl: null,
 
-    createView: function(d3c, parentCtrl, flShow) {
+    createView: function(d3c, parentCtrl, show) {
 		this.parentCtrl = parentCtrl;
-		this.view.create(d3c, this, flShow);
+		this.view.create(d3c, this, show);
 	},
 
 	// # >>> Events from user's GUI actions
 
-    mapHovered: function(d, flShow, callParent=true) {
-		this.view.hoverMap(d, flShow);
+    mapHovered: function(d, show, callParent=true) {
+		this.view.hoverMap(d, show);
 
 		if (callParent) {
         	// Push up this event to the parent controller so that other views can respond
 			var state = model.mapStateName2Acro.get(d.properties.name);
-        	this.parentCtrl.mapHovered(state, flShow);
+        	this.parentCtrl.mapHovered(state, show);
 		}
     },
 
@@ -310,9 +310,9 @@ var chart_mapStatesCtrl = {
 
 	// # >>> Messages coming from the parent controller
 
-	simulateMapHover: function(state, flShow) {
+	simulateMapHover: function(state, show) {
 		var s = this.view.getState(state);
-        this.mapHovered(s.datum(), flShow, false);
+        this.mapHovered(s.datum(), show, false);
     },
 
 	simulateStateClick: function(state) {

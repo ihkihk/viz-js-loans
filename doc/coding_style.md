@@ -6,6 +6,8 @@ _Last update: 30-Jul-2016_
 ## Abbreviations
 
 * Btn - button
+* cb - callback
+* cls - class (e.g. CSS-selector class)
 * Ctrl - controller
 * `d` - d3 element's datum
 * `geom` object properties:  

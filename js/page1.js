@@ -4,13 +4,13 @@
 
 var page1View = new View();
 
-page1View.create = function(canvas, ctrl, flShow=false)
+page1View.create = function(canvas, ctrl, show=false)
 {
 	View.prototype.create.call(this, canvas, ctrl, 'page');
 
 	this.cView.d3c.append('text').attr('transform', 'translate(150,100)').text('Page1');
 
-	this.show(flShow);
+	this.show(show);
 }; // end function create(...)
 
 var page1Ctrl = {
@@ -18,16 +18,16 @@ var page1Ctrl = {
 	parentCtrl: null,
 	pageShown: null,
 
-	createView: function(d3c, parentCtrl, flShow) {
+	createView: function(d3c, parentCtrl, show) {
 		this.parentCtrl = parentCtrl;
-		this.view.create(d3c, this, flShow);
-		this.pageShown = flShow;
+		this.view.create(d3c, this, show);
+		this.pageShown = show;
 	},
 
-	show: function(flShow)
+	show: function(show)
 	{
-		this.pageShown = flShow;
-		View.prototype.show.call(this.view, flShow);
+		this.pageShown = show;
+		View.prototype.show.call(this.view, show);
 	}
 };
 

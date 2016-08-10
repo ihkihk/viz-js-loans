@@ -79,13 +79,13 @@ View.prototype.create = function(canvas, ctrl, name) {
 };
 
 // Function for showing or hiding the view
-View.prototype.show = function(flShow, flAnim=true)
+View.prototype.show = function(show, anim=true)
 {
-	var state = flShow ? 1 : 0;
-	var dspl = flShow ? 'block' : 'none';
-	var animDuration = flAnim ? 1000 : 0;
+	var state = show ? 1 : 0;
+	var dspl = show ? 'block' : 'none';
+	var animDuration = anim ? 1000 : 0;
 
-	if (flShow) {
+	if (show) {
 		this.canvas.d3c.style('display', dspl).transition().duration(animDuration).style('opacity', state);
 	} else {
 		this.canvas.d3c.transition().duration(animDuration).style('opacity', state).on('end', function() { d3.select(this).style('display', dspl); });
