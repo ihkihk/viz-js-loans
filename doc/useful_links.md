@@ -1,3 +1,6 @@
+# Statistical data
+* [Wikipedia - List of US states by income](https://en.wikipedia.org/wiki/List_of_U.S._states_by_income)
+
 # SVG
 * <https://benfrain.com/applying-multiple-svg-filter-effects-defined-in-css-or-html/>
 * <https://css-tricks.com/svg-use-external-source/>
