@@ -34,13 +34,13 @@ page0View.create = function(canvas, ctrl, show=false)
 
 	this.gui.scatterCanvas.size.w = this.cView.iw/2;
 	this.gui.scatterCanvas.size.h = this.cView.ih/2;
-
-	this.gui.barchartCanvas.o.x = 0;
+	
+	this.gui.scatterCanvas.o.x = 0;
+	this.gui.scatterCanvas.o.y = 0;
+	this.gui.mapCanvas.o.x = 0;
+	this.gui.mapCanvas.o.y = this.gui.scatterCanvas.size.h;
+	this.gui.barchartCanvas.o.x = this.gui.scatterCanvas.size.w;
 	this.gui.barchartCanvas.o.y = 0;
-	this.gui.mapCanvas.o.x = this.gui.barchartCanvas.size.w;
-	this.gui.mapCanvas.o.y = 0;
-	this.gui.scatterCanvas.o.x = this.gui.barchartCanvas.size.w;
-	this.gui.scatterCanvas.o.y = this.gui.mapCanvas.size.h;
 
 	this.gui.barchartCanvas.d3c = this.cView.d3c.append('g').
 		attr('transform', 'translate('+this.gui.barchartCanvas.o.x+','+this.gui.barchartCanvas.o.y+')');
