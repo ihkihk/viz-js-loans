@@ -64,12 +64,11 @@ scatterView.create = function(canvas, ctrl, show=false)
 			style('text-anchor', 'middle').text('Per-capita income [$]');
 
 		yAxis.d3c.append('text').
-			attr('transform', 'translate(' + [-2, 0] + ')').
-			attr('x', 0).attr('y', 0).
+			attr('x', -50).attr('y', -15).
 			attr('dy', '0.5em').
 			attr('class', 'title').
 			style('fill', 'black').
-			style('text-anchor', 'end').text('Loan [$]');
+			style('text-anchor', 'middle').text('Average Original Loan Amount [$]').call(textWrap, 60);
 
         //chart.plot.BBox = {x: 0, y: 0, w: this.cView.iw, h: this.cView.ih};
 
@@ -97,6 +96,19 @@ scatterView.create = function(canvas, ctrl, show=false)
 
 		chart.plot.d3c.append('line').attr('class', 'fit-model-line').
 			attr('x1', lsrl_x1).attr('y1', lsrl_y1).attr('x2', lsrl_x2).attr('y2', lsrl_y2);
+			
+		// Draw the LSRL legend
+		var lsrlLegend = chart.plot.d3c.append('g').attr('class', 'legend').
+			attr('transform', 'translate(' + [chart.plot.BBox.w-90, chart.plot.BBox.h-50] + ')');
+		
+		lsrlLegend.append('line').attr('class', 'fit-model-line').
+			attr('x1', 0).attr('y1', 0).
+			attr('x2', 20).attr('y2', 0);
+			
+		lsrlLegend.append('text').
+			attr('x', 25).
+			attr('y', 0).style('alignment-baseline', 'middle').
+			text('LS model fit');
 
         // The canvas to contain the bubble mesh
         var bubbles = chart.plot.d3c.append('g').attr('class', 'bubbles').

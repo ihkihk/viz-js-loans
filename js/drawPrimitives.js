@@ -54,7 +54,7 @@ function drawTextButton(parent, x, y, w, h, txt, cls, id, callback, rx=30, ry=30
 		attr('rx', rx).attr('ry', ry).on('click', callback);
 
 	// Draw button text
-	btn1.append('text').attr('x', w/2).attr('y', h/2).attr('dy', 0.8).
+	btn1.append('text').attr('x', 0).attr('y', h/2).attr('dy', 0.8).
 		style('alignment-baseline', 'middle').style('text-anchor', 'middle').
 		text(txt).call(textWrap, w);
 } // end function drawTextButton(...)
@@ -86,11 +86,13 @@ function textWrap(text, width) {
 			line = [],
 			lineNumber = 0,
 			lineHeight = 1.1, // ems
-			y = text.attr("y"),
+			x = parseInt(text.attr("x"), 10),
+			y = parseInt(text.attr("y"), 10),
 			dy = parseFloat(text.attr("dy")),
-			tspan = text.text(null).append("tspan").attr("x", width/2).
+			tspan = text.text(null).append("tspan").attr("x", x).attr("dx", width/2).
 				attr("y", y).attr("dy", dy + "em");
 
+		//debugger;
 		while (word = words.pop()) {
 			line.push(word);
 			tspan.text(line.join(" "));
@@ -98,7 +100,7 @@ function textWrap(text, width) {
 				line.pop();
 				tspan.text(line.join(" "));
 				line = [word];
-				tspan = text.append("tspan").attr("x", width/2).attr("y", y).
+				tspan = text.append("tspan").attr("x", x).attr("dx", width/2).attr("y", y).
 					attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
 			}
 		}

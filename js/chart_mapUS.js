@@ -119,7 +119,7 @@ mapStatesView.create = function(canvas, ctrl, show=false)
 		// Legend title
 		legend.append('g').attr('transform', 'translate(0, 0)').
 			append('text').attr('class', 'title').
-			attr('x', 30).attr('y', 13).attr('dy', 0.8).
+			attr('x', 2).attr('y', 13).attr('dy', 0.8).
 			style('alignment-baseline', 'middle').style('text-anchor', 'middle').
 			text('Per-capita income [$]').call(textWrap, 60);
 

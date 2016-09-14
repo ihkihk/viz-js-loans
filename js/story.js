@@ -92,7 +92,7 @@ storyView.createButtonRibbon = function() {
 
 	// Draw title
 	this.cView.d3c.append('text').attr('class', 'story-title').
-		attr('x', 200).attr('y', 50).attr('dy', '0.8').
+		attr('x', 20).attr('y', 50).attr('dy', '0.8').
 		text("Some insights into Prosper's loan statistics").
 		style('alignment-baseline', 'middle').style('text-anchor', 'middle').
 		call(textWrap, 500);
