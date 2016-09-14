@@ -247,7 +247,7 @@
 .scatter .fit-model-line {
 	stroke: pink;
 	stroke-width: 3px;
-	opacity: 0.5;
+	opacity: 1;
 	stroke-dasharray: 8 4;
 }
 
