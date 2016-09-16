@@ -234,14 +234,33 @@
 	font: 10px sans-serif;
 }
 
+.legend .title {
+	font-weight: bold;
+}
+
 .bkgrnd-legend {
 	fill: floralwhite;
     stroke: black;
     stroke-width: 1;
 }
 
-.legend .title {
-	font-weight: bold;
+.tooltip rect {
+	fill: floralwhite;
+    stroke: black;
+    stroke-width: 1;
+    pointer-events: none;
+}
+
+.tooltip text {
+	font: 10px sans-serif;
+	alignment-baseline: middle;
+}
+
+
+
+.chart-title {
+    font: 16px sans-serif;
+    font-style: italic;
 }
 
 .scatter .fit-model-line {
