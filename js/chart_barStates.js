@@ -102,37 +102,65 @@ chartStatesView.create = function(canvas, ctrl, show=false)
 
 		// Put icons
 		var icon = {};
-		icon.BBox = {x:100, y:20, w:15, h:15};
+		icon.BBox = {x:60, y:20, w:15, h:15};
 
 		this.gui.icons['asc'].d3c = this.cView.d3c.append('image').
 			attr('x', icon.BBox.x).attr('y', icon.BBox.y).
 			attr('class', 'icon').attr('display', 'none').
 			attr('width', icon.BBox.w).attr('height', icon.BBox.h).
 			attr('href','icons/sort-ascending.svg').
-			on('click', function() { this.ctrl.iconSortAscClicked();}.bind(this));
+			on('click', function() {
+				this.ctrl.hideIconTooltip();
+				this.ctrl.iconSortAscClicked();
+			}.bind(this)).
+			on('mouseenter', function() { 
+				this.ctrl.showIconTooltip('sortIncr', d3.event, icon.BBox.x, icon.BBox.y);
+			}.bind(this)).
+			on('mouseout', function() { this.ctrl.hideIconTooltip(); }.bind(this));
 
 		this.gui.icons['desc'].d3c = this.cView.d3c.append('image').
 			attr('x', icon.BBox.x).attr('y', icon.BBox.y).
 			attr('class', 'icon').attr('display', 'none').
 			attr('width', icon.BBox.w).attr('height', icon.BBox.h).
 			attr('href','icons/sort-descending.svg').
-			on('click', function() { this.ctrl.iconSortDescClicked();}.bind(this));
+			on('click', function() {
+				this.ctrl.hideIconTooltip();
+				this.ctrl.iconSortDescClicked();
+			}.bind(this)).
+			on('mouseenter', function() { 
+				this.ctrl.showIconTooltip('sortDecr', d3.event, icon.BBox.x, icon.BBox.y);
+			}.bind(this)).
+			on('mouseout', function() { this.ctrl.hideIconTooltip(); }.bind(this));
 
 		this.gui.icons['alpha'].d3c = this.cView.d3c.append('image').
 			attr('x', icon.BBox.x).attr('y', icon.BBox.y).
 			attr('class', 'icon').attr('display', 'none').
 			attr('width', icon.BBox.w).attr('height', icon.BBox.h).
 			attr('href','icons/sort-alpha.svg').
-			on('click', function() { this.ctrl.iconSortAlphaClicked();}.bind(this));
+			on('click', function() { 
+				this.ctrl.hideIconTooltip();
+				this.ctrl.iconSortAlphaClicked();
+			}.bind(this)).
+			on('mouseenter', function() { 
+				this.ctrl.showIconTooltip('sortAlpha', d3.event, icon.BBox.x, icon.BBox.y);
+			}.bind(this)).
+			on('mouseout', function() { this.ctrl.hideIconTooltip(); }.bind(this));
 
 		var icon1 = {};
-		icon1.BBox = {x:icon.BBox.x+50, y:icon.BBox.y, w:icon.BBox.w, h:icon.BBox.h};
+		icon1.BBox = {x:icon.BBox.x+30, y:icon.BBox.y, w:icon.BBox.w, h:icon.BBox.h};
 		this.gui.icons['details'].d3c = this.cView.d3c.append('image').
 			attr('x', icon1.BBox.x).attr('y', icon1.BBox.y).
 			attr('class', 'icon-inactive').
 			attr('width', icon1.BBox.w).attr('height', icon1.BBox.h).
 			attr('href','icons/information-button.svg').
-			on('click', function() { this.ctrl.iconDetailsClicked();}.bind(this));
+			on('click', function() { 
+				this.ctrl.hideIconTooltip();
+				this.ctrl.iconDetailsClicked();
+			}.bind(this)).
+			on('mouseenter', function() { 
+				this.ctrl.showIconTooltip('details', d3.event, icon1.BBox.x, icon1.BBox.y);
+			}.bind(this)).
+			on('mouseout', function() { this.ctrl.hideIconTooltip(); }.bind(this));
 
 
 		// Show the info first in descending sort (highest amount at the top)
@@ -140,6 +168,12 @@ chartStatesView.create = function(canvas, ctrl, show=false)
 
 		// Show details by default
 		this.ctrl.iconDetailsClicked();
+		
+		// Chart title
+		this.cView.d3c.append('text').attr('class', 'chart-title').
+			attr('x', this.cView.iw/2).attr('y', 20).
+			style('text-anchor', 'middle').
+			text('US states\' per-capita incomes');
 		
 		// Announce that the view has finished loading
 		this.flViewLoaded = true;
@@ -289,7 +323,7 @@ var chart_barStatesCtrl = {
 		this.view.create(d3c, this, show);
 	},
 
-	// # >>> Icon clicks
+	// # >>> Icon-related events
 
 	iconSortDescClicked: function() {
 		this.sortType = 'desc';
@@ -315,8 +349,40 @@ var chart_barStatesCtrl = {
 		this.view.gui.icons['details'].d3c.classed('icon-active', this.showDetails);
 		this.view.gui.icons['details'].d3c.classed('icon-inactive', !this.showDetails);
 	},
+	
+	showIconTooltip: function(name, ev, targetX, targetY) {
+		var txt = {'details': 'Toggle details',
+				   'sortAlpha': 'Sort alphabetically',
+				   'sortDecr': 'Sort decreasing',
+				   'sortIncr': 'Sort increasing'};
+		
+		var tt = this.view.cView.d3c.append('g').attr('class', 'tooltip').
+			attr('transform', 'translate(' + [targetX - 5, targetY - 25] + ')').
+			style('opacity', 0);
+			
+		tt.transition().delay(700).duration(300).style('opacity', 1);
+			
+		var ttText = tt.append('text').attr('x', 5).attr('y', 5).
+			text(txt[name]);
+			
+		var textWidth = getElementPropertyPx(ttText.node(), 'width');
+		var textHeight = getElementPropertyPx(ttText.node(), 'height');
+		textWidth = ttText.node().textLength.baseVal.value;
+		
+		ttText.attr('y', textHeight/2 + 5);
 
-	// # <<< Icon clicks
+		tt.insert('rect', ':first-child').attr('x', 0).attr('y', 0).
+			attr('rx', 3).attr('ry', 3).
+			attr('width', textWidth + 10).attr('height', textHeight + 10);
+			
+
+	},
+	
+	hideIconTooltip: function() {
+		this.view.cView.d3c.selectAll('.tooltip').remove();
+	},
+
+	// # <<< Icon related events
 
 	handleDetails: function(d, show) {
 		if (show && this.showDetails) {

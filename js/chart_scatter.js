@@ -138,6 +138,12 @@ scatterView.create = function(canvas, ctrl, show=false)
             }.bind(this)).
 			on('click', function(d) { this.ctrl.bubbleClicked(d); }.bind(this));
 			
+		// Chart title
+		this.cView.d3c.append('text').attr('class', 'chart-title').
+			attr('x', this.cView.iw/2).attr('y', 20).
+			style('text-anchor', 'middle').
+			text('Average loan amounts in function of the states\' per-capita income');
+		
 		// Announce that the view has finished loading
 		this.flViewLoaded = true;
 	} // end function drawChart(...)
