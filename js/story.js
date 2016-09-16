@@ -92,8 +92,15 @@ storyView.createButtonRibbon = function() {
 
 	// Draw title
 	this.cView.d3c.append('text').attr('class', 'story-title').
-		attr('x', 20).attr('y', 50).attr('dy', '0.8').
-		text("Some insights into Prosper's loan statistics").
+		attr('x', 20).attr('y', 40).attr('dy', '0.8').
+		text("Some insights into the P2P lending market")./*Prosper's loan statistics").*/
+		style('alignment-baseline', 'middle').style('text-anchor', 'middle').
+		call(textWrap, 500);
+		
+	// Draw subtitle
+	this.cView.d3c.append('text').attr('class', 'story-subtitle').
+		attr('x', 20).attr('y', 100).attr('dy', '0.8').
+		text("Based on freely available statistics from Prosper.com").
 		style('alignment-baseline', 'middle').style('text-anchor', 'middle').
 		call(textWrap, 500);
 	
