@@ -25,7 +25,7 @@ There were two reasons for this decision:
 1. I wanted to get enough hands-on experience with both Tableau and d3.js
 1. I used the Tableau version as a relatively quick way to study the dataset, try out different visualization approaches, present them to other people for feedback and draft the final version. In parallel, I was working on the d3.js version, which due to the fact that I had to learn from scratch SVG/JS/d3.js, was progressing much slower. In fact, due to time limitations, it is **still unfinished**, as it contains only the first of the four story slides.   
 
-The final (after incorporating feedback) Tableau version can be viewed at my Tableau Public [profile](https://public.tableau.com/profile/ivailo.kassamakov#!/vizhome/ProsperLoans2nditer/Story1).
+The final (after incorporating feedback) Tableau version can be viewed at my Tableau Public [profile](https://public.tableau.com/profile/ivailo.kassamakov#!/vizhome/ProsperLoans2nditer/Story1). As required by the project rubric, the first version of the visualization (before feedback) is also [available](https://public.tableau.com/profile/ivailo.kassamakov#!/vizhome/ProsperLoans/Story1).
 
 To view the d3.js viz go to [rawgit](https://rawgit.com/ihkihk/viz-js-loans/master/index.html).
 
@@ -51,9 +51,9 @@ In general, the story design allows for fulfilling the major paradigm of informa
 The first slide shows that people living in richer states tend to take bigger credits. The definition of a "richer" state is one having higher per-capita income (GDP divided by the amount of population). I brought in the "per-capita" information from an additional dataset found on [Wikipedia](https://en.wikipedia.org/wiki/List_of_U.S._states_by_income). This new dataset was joined with the Prosper loans dataset.
 
 This slide contains the following plots:
-* Barplot showing the median per-capita income for each US state.
-* A choropleth map of the US, where each state's per capita income is coded with a different color intensity. 
-* A scatter plot relating the per-capita income with the average loan amount for each US state. This plot reveals the main finding that there is a positive correlation between both factors. To better visualize it, a linear (least squares) regression model line is fitted on top of the scatter plot.
+* A scatter plot relating the per-capita income with the average loan amount for each US state. This plot reveals the main finding that there is a positive correlation between both factors. To better visualize it, a linear (least squares) regression model line is fitted on top of the scatter plot. This plot was chosen as most appropriate for showing the relationship between two independent continuous quantitative variables characterizing a given measuring point (US states in this case).
+* A choropleth map of the US, where each state's per capita income is coded with a different color intensity. Chropleth maps are very useful for showing the geographic distribution of a given quantitative variable.
+* A barplot showing the median per-capita income for each US state. This plot is a good choice for visualizing two dependent variables, one of which is categorical and the other one is numerical.
 
 Based on the feedback received, I performed the following changes to the initial viz prototype:
 * The US state barplot was changed from vertical to horizontal bar layout. The position of the barplot and the scatter plot were exchanged. Both steps achieved better overall space utilization.
@@ -61,11 +61,13 @@ Based on the feedback received, I performed the following changes to the initial
 
 #### Slide 2
 
-The second slide tells that there is a positive correlation between the annual income and the average amount of the borrowed loan. This is best of all seen on the scatter plot, where the datapoints represent the different professions. Again an LSRL is fitted on the datapoints to better visualize the relationship.
+The second slide tells that there is a positive correlation between the annual income and the average amount of the borrowed loan. This is best of all seen on the scatter plot, where the datapoints represent the different professions. Again an LSRL is fitted on the datapoints to better visualize the correlation. As with the first slide, we've chosen the scatter plot as most appropriate for showing the relationship of two independent quantitative variables.
 
-The other plot of this slide is a histogram of the average loan amount. It is filterable by occupation of the borrower. The two plots are interrelated, whereby an occupation datapoint selected on the scatter plot directly serves as a filter for the histogram.
+The other plot of this slide is a histogram of the average loan amount. It is filterable by occupation of the borrower. The histogram plot was a natural choice for representing the frequencies of the values of a binned numerical variable.
 
 The histogram reveals that borrowers prefer to take loan amounts that are multiple of $5K. As one of the feedback providers noted, there is also a pronounced peak at $4K. I couldn't find the reason for this (could be due to tax policies for example?), however I annotated the graphic with this interesting finding.
+
+The two plots are interrelated, whereby an occupation datapoint selected on the scatter plot directly serves as a filter for the histogram.
 
 This slide was most heavily overhauled based on the received feedback. In the first version of the visualization I had tried to present the income-loan correlation in a rather confusing way using two stacked barplots. Later they were replaced by the scatterplot.
 
@@ -74,9 +76,9 @@ This slide was most heavily overhauled based on the received feedback. In the fi
 The next slide sheds some light on how the status of the Prosper loan correlates with income and past credit behavior of the borrower. The status can be either OK (i.e. serviced without delays) or problematic (delayed, charged-off or defaulted).
 
 Three plots present the information:
-* A box-and-whiskers plot summarizing the statistics for the borrowers' incomes for each group loan statuses. It clearly shows that higher income correlates with better status of the loan.
-* A barplot showing the average amount of past credit delinquencies perpetrated by the borrowers in each group of loan statuses. Again, there is a positive relationship between the number of delinquencies and the problematic status of the current Prosper loan.
-* A packed-bubbles plot finally provides some additional context by showing a breakdown of the relative amount of loans in the 4 status groups. According to it, the loans with OK status form the absolute majority.
+* A box-and-whiskers plot summarizing the statistics for the borrowers' incomes for each group loan statuses. It clearly shows that higher income correlates with better status of the loan. A B-and-W plot was chosen for its simultaneous visualization of the central tendency measures (e.g. mean/median), the quartile distribution, IQR and even outliers of a quantitave variable.
+* A barplot showing the average amount of past credit delinquencies perpetrated by the borrowers in each group of loan statuses. Again, there is a positive relationship between the number of delinquencies and the problematic status of the current Prosper loan. Since here we also have a numerical dependent and categorical independent variable, the barplot is a natural choice for their presentation.
+* A packed-bubbles plot finally provides some additional context by showing a breakdown of the relative amount of loans in the 4 status groups. According to it, the loans with OK status form the absolute majority. This type of chart is well suited for showing the relative weights of the categories in a measurement set. An important consideration with such bubble charts is making sure that the variable is *sqrt*-scaled, so that it is the areas of the circles (the visual that the eyes are sensitive to) and not their radius that represents the measured values.
 
 The initial version of the visualization didn't contain the box-and-whiskers chart. It was prompted by one of the reviewers, who found that it would be logical to continue the narrative of the previous slides by exploring the correlation between the borrower's income and the status of their loan.
 
@@ -84,7 +86,7 @@ The initial version of the visualization didn't contain the box-and-whiskers cha
 
 The last slide of the narrative tells a time story - how the average amount and number of loans have evolved during the years. It's pretty easy to see to the depressing effect of the financial crisis of 2007-2009.
 
-Two stacked time-series charts made predominantly of line plots serve the purpose. The line plots were selected as they are usually the most appropriate medium for visualizing time-series information.
+Two stacked time-series charts made predominantly of line plots serve the purpose. The line plots were selected as they are usually the most appropriate medium for visualizing time-series information, i.e. the evolution in time of a quantitative variable.
 
 The upper chart combines a line plot showing the average loan amount through the years with a barplot of the number of loans borrowed during each time period (in this case - quarters). Initially I doubted about showing the number of loans also with a line chart. Several reviewers however saw the lineplot-superimposed-on-barplot visually more appealing, as well as underlining the different nature of the two variables. 
 
